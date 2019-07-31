@@ -50,6 +50,6 @@ app.post("/checkotp",function(req,res){
 	}
 });
 app.get("/",function(req,res){res.render("index");});
-app.listen(3000,function(){
+app.listen(process.env.PORT,process.env.IP,function(){
 console.log("App started");
 });
