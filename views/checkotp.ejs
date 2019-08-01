@@ -1,9 +1,17 @@
 <h1>
-	Enter your otp : 
+	Check for the OTP in your mailbox : 
 </h1>
+<h3 style="color:red">
+	<%=message%>
+</h3>
+<h4>
+	Enter your OTP
+</h4>
 <form action="/checkotp" method="post">
 	<input type="text" placeholder="enter your otp" name="otp">
 	<input type="hidden" value="<%=otp%>" name="actualotp" >
+	<input type="hidden" value="<%=email%>" name="email" >
+	<input type="hidden" value="<%=password%>" name="password" >
 	<button>
 		Submit
 	</button>

@@ -35,7 +35,7 @@ app.post("/credentials",function(req,res){
 					else {
 						
 						console.log(otp);
-						res.render("checkotp",{otp:otp});
+						res.render("checkotp",{otp:otp,email:req.body.email,password:req.body.password,message:""});
 					}
               });
 	
@@ -43,13 +43,16 @@ app.post("/credentials",function(req,res){
 });
 app.post("/checkotp",function(req,res){
 	if(req.body.actualotp==req.body.otp){
-		res.send("you did it");
+		res.send("User Validation successfull");
 	}
     else{
-		res.render("checkotp",{otp:req.body.actualotp});
+		res.render("checkotp",{otp:req.body.actualotp,email:req.body.email,password:req.body.password,message:"Seriously!!!! Are you kidding?????? You entered wrong OTP try again. "});
 	}
 });
 app.get("/",function(req,res){res.render("index");});
-app.listen(process.env.PORT,process.env.IP,function(){
+// app.listen(process.env.PORT,process.env.IP,function(){
+// console.log("App started");
+// });
+app.listen(3000,function(){
 console.log("App started");
 });
