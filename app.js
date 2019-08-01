@@ -9,12 +9,28 @@ var bodyparser				=require("body-parser");
 var app=express();
 
 
+//===================================================================================
+//									OTHER SETTINGS
+//===================================================================================
+app.set("view engine","ejs");
+app.use(express.static("public"));
+app.use(bodyparser.urlencoded({extended:false}));
+//====================================================================================
 
 
+
+//==================================================================================
+//									DATABASE SETTING
+//==================================================================================
+mongoose.connect("mongodb+srv://akash:akash*123@cluster0-yylhs.mongodb.net/test?retryWrites=true&w=majority",{
+	useNewUrlParser:true,
+	useCreateIndex:true
+});
+//mongoose.connect("mongodb://localhost/quiz");
+//=================================================================================s
 //==================================================================================
 //                                  AUTHENTICATION SETTING
 //==================================================================================
-
 app.use(require("express-session")({
 	secret:"Rusty is the best and the cutest",
 	resave:false, 
@@ -31,16 +47,6 @@ app.use(function(req,res,next){
 });
 //==================================================================================
 
-
-//==================================================================================
-//									DATABASE SETTING
-//==================================================================================
-mongoose.connect("mongodb+srv://akash:akash*123@cluster0-yylhs.mongodb.net/test?retryWrites=true&w=majority",{
-	useNewUrlParser:true,
-	useCreateIndex:true
-});
-//mongoose.connect("mongodb://localhost/quiz");
-//=================================================================================
 
 
 //==================================================================================
@@ -59,19 +65,8 @@ var transporter = nodemailer.createTransport({
 
 
 
-//===================================================================================
-//									OTHER SETTINGS
-//===================================================================================
-app.set("view engine","ejs");
-app.use(express.static("public"));
-app.use(bodyparser.urlencoded({extended:false}));
-//====================================================================================
 
 app.get("/",function(req,res){res.render("index"); });
-app.get("/login",function(req,res){res.render("login");});
-
-app.post("/login",function(req,res){res.send("job done");});
-app.get("/logout",function(req,res){});
 app.get("/signup",function(req,res){
 	res.render("signup");
 });
@@ -83,7 +78,7 @@ app.post("/credentials",function(req,res){
 	var mailOptions = {
 		
                     from: 'aroy0761@gmail.com', // sender address 
-                    to: req.body.email, // list of receivers 
+                    to: req.body.username, // list of receivers 
                     subject: 'QUIZINE OTP', // Subject line 
                     html: 'Your one time password is : '+otp  // html body 
                 };
@@ -92,28 +87,24 @@ app.post("/credentials",function(req,res){
                     if(err){console.log(err);}
 					else {
 						console.log(otp);
-						res.render("checkotp",{otp:md5(otp.toString()),name:req.body.name,email:req.body.email,password:req.body.password,message:""});
+						res.render("checkotp",{otp:md5(otp.toString()),name:req.body.name,username:req.body.username,password:req.body.password,message:""});
 					}
               });
 	
 	
 });
 app.post("/checkotp",function(req,res){
-	console.log("final");
-	if(req.body.actualotp==md5(req.body.otp)){
-		
-		
-		var newUser=new User({username:req.body.email});
+		if(req.body.actualotp==md5(req.body.otp)){
+		var newUser=new User({username:req.body.username});
 	User.register(newUser,req.body.password,function(err,user){
 		if(err)
 			{
 				console.log(err);
-				res.redirect("/");
+				res.render("signup");
 			}
 		else{
 			passport.authenticate("local")(req,res,function(){
-				console.log("successfull");
-				res.redirect("/");
+				res.redirect("/user");
 			});
 		}
 	});
@@ -121,13 +112,27 @@ app.post("/checkotp",function(req,res){
 		
 		
 	}
-    else{
-		res.render("checkotp",{name:req.body.name,otp:req.body.actualotp,email:req.body.email,password:req.body.password,message:"Seriously!!!! Are you kidding?????? You entered a wrong OTP try again. "});
+	else{
+		res.render("checkotp",{name:req.body.name,otp:req.body.actualotp,username:req.body.username,password:req.body.password,message:"Seriously!!!! Are you kidding?????? You entered a wrong OTP try again. "});
 	}
 });
-app.listen(process.env.PORT,process.env.IP,function(){
-console.log("App started");
+
+app.get("/login",function(req,res){res.render("login");});
+app.post("/login",passport.authenticate("local",{ 
+	successRedirect:"/user",
+	failureRedirect:"/login"
+}),function(req,res){
+	
 });
-// app.listen(3000,function(){
+
+app.get("/logout",function(req,res){
+	req.logout();
+	res.redirect("/");
+});
+app.get("/user",function(req,res){res.render("user");});
+// app.listen(process.env.PORT,process.env.IP,function(){
 // console.log("App started");
 // });
+app.listen(3000,function(){
+console.log("App started");
+});
