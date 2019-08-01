@@ -1,19 +1,46 @@
-<h1>
-	Check for the OTP in your mailbox : 
-</h1>
-<h3 style="color:red">
-	<%=message%>
-</h3>
-<h4>
-	Enter your OTP
-</h4>
-<form action="/checkotp" method="post">
+<% include partials/header%>
+
+<div class="row" style="margin-top:5%">
+	<div class="col-sm-4">
+		
+	</div>
 	
-	<input type="email" value="<%=email%>" name="email" >
-	<input type="password" value="<%=password%>" name="password" >
-	<input type="text" placeholder="enter your otp" name="otp">
-	<input type="hidden" value="<%=otp%>" name="actualotp" >
-	<button>
-		Submit
-	</button>
+	<div class="col-sm-4">
+		<h2>
+			<center><strong>Sign Up</strong></center>
+		</h2>
+		<form method="post" action="/checkotp" Style="margin-top:3%;">
+			<div class="form-group">
+    <label for="exampleInputEmail1">Full Name</label>
+    <input type="email" class="form-control" name="name" value="<%=name%>"readonly>
+  </div>
+  <div class="form-group">
+    <label for="exampleInputEmail1">Email address</label>
+    <input type="email" class="form-control" name="email" value="<%=email%>"readonly>
+  </div>
+ 
+	 <div class="form-group">
+    <label for="exampleInputPassword1">Password</label>
+    <input type="password" name="password" class="form-control" value="<%=password%>" readonly>
+  </div>
+  
+			 <div class="form-group">
+    <label for="exampleInputPassword1">OTP</label>
+	<input type="text" class="form-control" placeholder="enter your otp" name="otp">
+         <small id="emailHelp" class="form-text text-muted" style="color:red">Check your email for the OTP.</small>
+
+  </div>
+  
+  	<input type="hidden" value="<%=otp%>" name="actualotp" >
+
+			
+  <button type="submit" class="btn btn-primary">submit</button>
 </form>
+
+	</div>
+	<div class="col-sm-4">
+		
+	</div>
+	
+</div>
+<% include partials/footer%>
