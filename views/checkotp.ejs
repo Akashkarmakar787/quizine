@@ -8,10 +8,11 @@
 	Enter your OTP
 </h4>
 <form action="/checkotp" method="post">
+	
+	<input type="email" value="<%=email%>" name="email" >
+	<input type="password" value="<%=password%>" name="password" >
 	<input type="text" placeholder="enter your otp" name="otp">
 	<input type="hidden" value="<%=otp%>" name="actualotp" >
-	<input type="hidden" value="<%=email%>" name="email" >
-	<input type="hidden" value="<%=password%>" name="password" >
 	<button>
 		Submit
 	</button>

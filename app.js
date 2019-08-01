@@ -1,4 +1,5 @@
 var express=require("express");
+var md5=require("md5");
 var app=express();
 var nodemailer = require('nodemailer');
 app.set("view engine","ejs");
@@ -33,26 +34,31 @@ app.post("/credentials",function(req,res){
                 transporter.sendMail(mailOptions, function (err, info) {
                     if(err){console.log(err);}
 					else {
-						
 						console.log(otp);
-						res.render("checkotp",{otp:otp,email:req.body.email,password:req.body.password,message:""});
+						res.render("checkotp",{otp:md5(otp.toString()),email:req.body.email,password:req.body.password,message:""});
 					}
               });
 	
 	
 });
 app.post("/checkotp",function(req,res){
-	if(req.body.actualotp==req.body.otp){
+	
+	if(req.body.actualotp==md5(req.body.otp)){
 		res.send("User Validation successfull");
 	}
     else{
-		res.render("checkotp",{otp:req.body.actualotp,email:req.body.email,password:req.body.password,message:"Seriously!!!! Are you kidding?????? You entered wrong OTP try again. "});
+		res.render("checkotp",{otp:req.body.actualotp,email:req.body.email,password:req.body.password,message:"Seriously!!!! Are you kidding?????? You entered a wrong OTP try again. "});
 	}
 });
-app.get("/",function(req,res){res.render("index");});
-app.listen(process.env.PORT,process.env.IP,function(){
-console.log("App started");
-});
-// app.listen(3000,function(){
+app.get("/",function(req,res)
+		{
+	res.render("index");
+							 
+							 
+							 });
+// app.listen(process.env.PORT,process.env.IP,function(){
 // console.log("App started");
 // });
+app.listen(3000,function(){
+console.log("App started");
+});
