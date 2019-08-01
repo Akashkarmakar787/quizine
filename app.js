@@ -56,9 +56,9 @@ app.get("/",function(req,res)
 							 
 							 
 							 });
-// app.listen(process.env.PORT,process.env.IP,function(){
-// console.log("App started");
-// });
-app.listen(3000,function(){
+app.listen(process.env.PORT,process.env.IP,function(){
 console.log("App started");
 });
+// app.listen(3000,function(){
+// console.log("App started");
+// });
