@@ -133,9 +133,6 @@ app.get("/logout",function(req,res){
 	res.redirect("/");
 });
 app.get("/dashboard",isLoggedIn,function(req,res){res.render("dashboard");});
-// app.listen(process.env.PORT,process.env.IP,function(){
-// console.log("App started");
-// });
 function isLoggedIn(req,res,next){
 	if(req.isAuthenticated())
 		return next();
@@ -145,6 +142,10 @@ function middleware(req,res,next){
 	if(!req.body.username)res.redirect("/");
 	else {next();}
 }
+// app.listen(process.env.PORT,process.env.IP,function(){
+// console.log("App started");
+// });
+
 app.listen(3000,function(){
 console.log("App started");
 });
