@@ -142,10 +142,10 @@ function middleware(req,res,next){
 	if(!req.body.username)res.redirect("/");
 	else {next();}
 }
-// app.listen(process.env.PORT,process.env.IP,function(){
-// console.log("App started");
-// });
-
-app.listen(3000,function(){
+app.listen(process.env.PORT,process.env.IP,function(){
 console.log("App started");
 });
+
+// app.listen(3000,function(){
+// console.log("App started");
+// });
