@@ -31,7 +31,6 @@
 
   </div>
   
-  	<input type="hidden" value="<%=otp%>" name="actualotp" >
 
 			
   <button type="submit" class="btn btn-primary">submit</button>
@@ -43,4 +42,12 @@
 	</div>
 	
 </div>
+<script>
+if("<%=message%>"=="you entered wrong OTP")
+	{
+		window.alert('Wrong OTP');
+    window.location.href='/';
+	}
+	
+</script>
 <% include partials/footer%>

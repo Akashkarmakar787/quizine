@@ -1,6 +1,8 @@
 var express					=require("express");
 var md5						=require("md5");
 var User					=require("./models/user");
+var Forgot					=require("./models/pin");
+var NewUser					=require("./models/newuserpin");
 var mongoose 				=require("mongoose");
 var passport				=require("passport");
 var LocalStrategy			=require("passport-local");
@@ -70,6 +72,90 @@ app.get("/",function(req,res){res.render("index"); });
 app.get("/signup",function(req,res){
 	res.render("signup",{message:""});
 });
+app.get("/forgotpassword",function(req,res){
+	res.render("forgotpassword",{message:""});
+		// Forgot.create({pin:"123",username:"akash"},function(err,pin){
+		// 	if(err)console.log(err);
+		// 	else {
+		// 		console.log(pin);
+		// 	}
+		// });
+		});
+app.post("/forgotpassword",middleware,forgotpassword_middleware,function(req,res){
+	
+	////////////
+	
+		var otp=Math.floor((Math.random() * 100) + 54);
+	var mailOptions = {
+		
+                    from: 'aroy0761@gmail.com', // sender address 
+                    to: req.body.username, // list of receivers 
+                    subject: 'QUIZINE OTP', // Subject line 
+                    html: 'Your OTP To change password is : '+otp+' It is only valid for 5minutes'  // html body 
+                };
+
+                transporter.sendMail(mailOptions, function (err, info) {
+                    if(err){console.log(err);}
+					else {
+						console.log(otp);
+					}
+              });
+	
+	///////////
+	Forgot.create({username:req.body.username,pin:otp},function(err,user){
+		if(err){console.log(err);}
+		else{console.log(user);
+			res.render("newpassword",{message:"",username:req.body.username});}
+	});
+	
+});
+app.post("/newpassword",middleware,function(req,res){
+	
+	Forgot.findOne({username:req.body.username},function(err,userpin){
+		console.log("forgot.pin="+userpin.pin);
+		console.log(req.body.otp);
+		if(userpin.pin==req.body.otp){
+			User.findOne({username:req.body.username},function(err,user){
+				console.log(user);
+				User.findByIdAndDelete(user._id,function(err){
+			if(err){console.log(err);}
+			else{
+				
+				
+				
+				var newUser=new User({username:req.body.username,name:user.name});
+	User.register(newUser,req.body.password,function(err,user){
+		if(err)
+			{
+				console.log(err);
+				res.render("signup");
+			}
+		else{
+			
+			passport.authenticate("local")(req,res,function(){
+				res.redirect("/dashboard");
+			});
+		}
+	});
+				
+				
+				
+			}
+		});
+				
+				
+				
+			});
+		
+		
+		
+	}
+		else{
+			//if pin is wrong code here
+			res.render("newpassword",{message:"you entered wrong OTP",username:req.body.username});
+		}
+	});
+});
 //=========================
 //MAILING ROUTES
 //=========================
@@ -81,15 +167,22 @@ app.post("/credentials",middleware,username_middleware,function(req,res){
 		
                     from: 'aroy0761@gmail.com', // sender address 
                     to: req.body.username, // list of receivers 
-                    subject: 'QUIZINE OTP', // Subject line 
-                    html: 'Your one time password is : '+otp  // html body 
+                    subject: 'QUIZINE change Password', // Subject line 
+                    html: 'Your OTP for registeration is : '+otp+' It is only valid for 5minutes'  // html body 
                 };
 
                 transporter.sendMail(mailOptions, function (err, info) {
                     if(err){console.log(err);}
 					else {
 						console.log(otp);
-						res.render("checkotp",{otp:md5(otp.toString()),name:req.body.name,username:req.body.username,password:req.body.password,message:""});
+						NewUser.create({username:req.body.username,otp:otp},function(err,newuser){
+									   if(err){console.log(err);}
+										else 
+											{
+						res.render("checkotp",{name:req.body.name,username:req.body.username,password:req.body.password,message:""});
+											}
+									   });
+						
 					}
               });
 	
@@ -97,7 +190,11 @@ app.post("/credentials",middleware,username_middleware,function(req,res){
 });
 app.get("/checkotp",function(req,res){res.redirect("/");});
 app.post("/checkotp",middleware,function(req,res){
-		if(req.body.actualotp==md5(req.body.otp)){
+	NewUser.findOne({username:req.body.username},function(err,newuser){
+		if(err)console.log(err);
+		else{
+			
+				if(newuser.otp==req.body.otp){
 		var newUser=new User({username:req.body.username,name:req.body.name});
 	User.register(newUser,req.body.password,function(err,user){
 		if(err)
@@ -117,8 +214,14 @@ app.post("/checkotp",middleware,function(req,res){
 		
 	}
 	else{
-		res.render("checkotp",{name:req.body.name,otp:req.body.actualotp,username:req.body.username,password:req.body.password,message:"Seriously!!!! Are you kidding?????? You entered a wrong OTP try again. "});
+		res.render("checkotp",{name:req.body.name,username:req.body.username,password:req.body.password,message:"you entered wrong OTP"});
 	}
+			
+			
+			
+		}
+	});
+	
 });
 
 app.get("/login",function(req,res){res.render("login");});
@@ -153,6 +256,22 @@ function username_middleware(req,res,next){
 			if(!user)next();
 			else 
 			res.render("signup",{message:"username exist"});}
+	});
+	
+}
+function forgotpassword_middleware(req,res,next){
+	User.findOne({username:req.body.username},function(err,user){
+		if(err){
+			res.render("forgotpassword",{message:"username doesn't exist"});
+			
+		}
+		else {
+			if(!user){
+				res.render("forgotpassword",{message:"username doesn't exist"});
+				}
+			else 
+				next();
+		}
 	});
 	
 }
