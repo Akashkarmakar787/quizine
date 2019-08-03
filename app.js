@@ -102,10 +102,36 @@ app.post("/forgotpassword",middleware,forgotpassword_middleware,function(req,res
               });
 	
 	///////////
-	Forgot.create({username:req.body.username,pin:otp},function(err,user){
-		if(err){console.log(err);}
-		else{console.log(user);
-			res.render("newpassword",{message:"",username:req.body.username});}
+	Forgot.findOne({username:req.body.username},function(err,olduser){
+		if(err)console.log(err);
+		else{
+			if(!olduser){
+							Forgot.create({username:req.body.username,pin:otp},function(err,user){
+						if(err){console.log(err);}
+						else{console.log(user);
+						res.render("newpassword",{message:"",username:req.body.username});}
+						
+					
+						
+	});
+			}
+			else{
+			Forgot.findByIdAndDelete(olduser._id,function(err){
+				if(err){console.log(err);}
+				else{
+					Forgot.create({username:req.body.username,pin:otp},function(err,user){
+						if(err){console.log(err);}
+						else{console.log(user);
+						res.render("newpassword",{message:"",username:req.body.username});}
+						
+					
+						
+	});
+	
+				}
+			});
+		}
+		}
 	});
 	
 });
@@ -175,13 +201,42 @@ app.post("/credentials",middleware,username_middleware,function(req,res){
                     if(err){console.log(err);}
 					else {
 						console.log(otp);
-						NewUser.create({username:req.body.username,otp:otp},function(err,newuser){
+						NewUser.findOne({username:req.body.username},function(err,user){
+										if(err)console.log(err);
+										else{
+											if(!user){
+										NewUser.create({username:req.body.username,otp:otp},function(err,newuser){
+									   if(err){console.log(err);}
+										else 
+											{
+						res.render("checkotp",{name:req.body.name,username:req.body.username,password:req.body.password,message:""});
+											}
+									   });	
+												
+												
+											}
+											else{
+											
+												
+												
+									NewUser.findByIdAndDelete(user._id,function(err){
+										
+										NewUser.create({username:req.body.username,otp:otp},function(err,newuser){
 									   if(err){console.log(err);}
 										else 
 											{
 						res.render("checkotp",{name:req.body.name,username:req.body.username,password:req.body.password,message:""});
 											}
 									   });
+										
+										
+									});	
+												
+										
+											}
+										}
+										});
+						
 						
 					}
               });
@@ -228,6 +283,7 @@ app.get("/login",function(req,res){res.render("login");});
 app.post("/login",passport.authenticate("local",{ 
 	successRedirect:"/dashboard",
 	failureRedirect:"/login"
+
 }),function(req,res){
 	
 });
@@ -275,10 +331,10 @@ function forgotpassword_middleware(req,res,next){
 	});
 	
 }
-app.listen(process.env.PORT,process.env.IP,function(){
-console.log("App started");
-});
-
-// app.listen(3000,function(){
+// app.listen(process.env.PORT,process.env.IP,function(){
 // console.log("App started");
 // });
+
+app.listen(3000,function(){
+console.log("App started");
+});
