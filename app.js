@@ -68,13 +68,14 @@ var transporter = nodemailer.createTransport({
 
 app.get("/",function(req,res){res.render("index"); });
 app.get("/signup",function(req,res){
-	res.render("signup");
+	res.render("signup",{message:""});
 });
 //=========================
 //MAILING ROUTES
 //=========================
+
 app.get("/credentials",function(req,res){res.redirect("/");});
-app.post("/credentials",middleware,function(req,res){
+app.post("/credentials",middleware,username_middleware,function(req,res){
 	var otp=Math.floor((Math.random() * 100) + 54);
 	var mailOptions = {
 		
@@ -142,10 +143,23 @@ function middleware(req,res,next){
 	if(!req.body.username)res.redirect("/");
 	else {next();}
 }
-app.listen(process.env.PORT,process.env.IP,function(){
-console.log("App started");
-});
-
-// app.listen(3000,function(){
+function username_middleware(req,res,next){
+	User.findOne({username:req.body.username},function(err,user){
+		if(err){
+			next();
+			
+		}
+		else {
+			if(!user)next();
+			else 
+			res.render("signup",{message:"username exist"});}
+	});
+	
+}
+// app.listen(process.env.PORT,process.env.IP,function(){
 // console.log("App started");
 // });
+
+app.listen(3000,function(){
+console.log("App started");
+});
