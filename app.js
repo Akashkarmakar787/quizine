@@ -2,6 +2,7 @@ var express					=require("express");
 var md5						=require("md5");
 var User					=require("./models/user");
 var Forgot					=require("./models/pin");
+var Admin					=require("./models/admin");
 var NewUser					=require("./models/newuserpin");
 var mongoose 				=require("mongoose");
 var passport				=require("passport");
@@ -293,10 +294,63 @@ app.get("/logout",function(req,res){
 	res.redirect("/");
 });
 app.get("/dashboard",isLoggedIn,function(req,res){res.render("dashboard");});
+
+//=======================================
+//			ADMIN ROUTES
+//=======================================
+app.get("/admin/signup",function(req,res){
+	res.render("./admin/signup",{message:"",wrongsecretcode:""});
+});
+app.post("/admin/signup",admin_middleware,function(req,res){
+	if(req.body.secretkey=="chankarsaa")
+		{
+			
+			var newAdmin=new Admin({username:req.body.username,name:req.body.name});
+	Admin.register(newAdmin,req.body.password,function(err,admin){
+		if(err)
+			{
+				console.log(err);
+				res.render("admin/signup",{message:"",wrongsecretcode:""});
+			}
+		else{
+			
+			passport.authenticate("local")(req,res,function(){
+				res.redirect("/admin/dashboard");
+			});
+		}
+	});
+			
+		}
+	else{
+		res.render("admin/signup",{message:"",wrongsecretcode:"You entered wrong secretcode"});
+	}
+	
+});
+app.get("/admin/dashboard",isAdminLoggedIn,function(req,res,next){
+		res.render("admin/dashboard");
+		});
+app.get("/admin/login",function(req,res){
+	res.render("./admin/login");
+});
+app.post("/admin/login",passport.authenticate("local",{ 
+	successRedirect:"/admin/dashboard",
+	failureRedirect:"/admin/login"
+
+}),function(req,res){
+	
+});
+//=============================
+//	MIDDLEWARE FUNCTIONS
+//=============================
 function isLoggedIn(req,res,next){
 	if(req.isAuthenticated())
 		return next();
 	else res.redirect("/login");
+}
+function isAdminLoggedIn(req,res,next){
+	if(req.isAuthenticated())
+		return next();
+	else res.redirect("/admin/login");
 }
 function middleware(req,res,next){
 	if(!req.body.username)res.redirect("/");
@@ -312,6 +366,19 @@ function username_middleware(req,res,next){
 			if(!user)next();
 			else 
 			res.render("signup",{message:"username exist"});}
+	});
+	
+}
+function admin_middleware(req,res,next){
+	Admin.findOne({username:req.body.username},function(err,user){
+		if(err){
+			next();
+			
+		}
+		else {
+			if(!user)next();
+			else 
+			res.render("admin/signup",{message:"username exist",wrongsecretcode:""});}
 	});
 	
 }
@@ -331,10 +398,11 @@ function forgotpassword_middleware(req,res,next){
 	});
 	
 }
-app.listen(process.env.PORT,process.env.IP,function(){
-console.log("App started");
-});
 
-// app.listen(3000,function(){
+// app.listen(process.env.PORT,process.env.IP,function(){
 // console.log("App started");
 // });
+
+app.listen(3000,function(){
+console.log("App started");
+});

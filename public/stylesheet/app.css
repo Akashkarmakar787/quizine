@@ -7,3 +7,17 @@
    color: white;
    text-align: center;
 }
+.topics{
+	height:100px;
+	border:1px solid black;
+	
+}
+.topics:hover{
+	background-color:#ffff66;
+}
+.contents{
+	margin-top:3%;margin-left:1px; 
+}
+.rightsidecontents{
+	margin-top:3%;margin-right:1px;
+}
