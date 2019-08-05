@@ -4,6 +4,7 @@ var User					=require("./models/user");
 var Forgot					=require("./models/pin");
 var Admin					=require("./models/admin");
 var NewUser					=require("./models/newuserpin");
+var Aptitude				=require("./models/aptitude");
 var mongoose 				=require("mongoose");
 var passport				=require("passport");
 var LocalStrategy			=require("passport-local");
@@ -338,6 +339,29 @@ app.post("/admin/login",passport.authenticate("local",{
 
 }),function(req,res){
 	
+});
+//===============================
+//	QUESTIONS ROUTES
+//===============================	
+app.get("/admin/aptitude",isAdminLoggedIn,function(req,res){
+	res.render("questions/aptitude",{message:""});
+});
+app.post("/admin/aptitude",isAdminLoggedIn,function(req,res){
+	Aptitude.create({question:req.body.question,optionA:req.body.optionA, optionB:req.body.optionB, optionC:req.body.optionC, optionD:req.body.optionD,answer:req.body.answer},function(err,question){
+		if(err){console.log(err);res.render("questions/aptitude",{message:""});}
+		else {console.log("Aptitude Question Added");res.render("questions/aptitude",{message:"question added"});}
+	});
+});
+//=============================
+//		SOLVE APTITUDE
+//=============================
+app.get("/solve/aptitude",isLoggedIn,function(req,res){
+	Aptitude.find({},function(err,allquestions){
+		if(err){console.log(err);}
+		else{
+	        res.render("solve/solveaptitude",{questions:allquestions});		
+		}
+	});
 });
 //=============================
 //	MIDDLEWARE FUNCTIONS
