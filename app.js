@@ -13,6 +13,7 @@ var bodyparser				=require("body-parser");
 var request					=require("request");
 var app=express();
 
+// to see the website visit https://shrouded-ridge-73828.herokuapp.com
 //===================================================================================
 //									OTHER SETTINGS
 //===================================================================================
@@ -387,11 +388,19 @@ app.post("/solve/more",isLoggedIn,function(req,res){
 				answers.push(data.incorrect_answers[1]);
 				answers.push(data.incorrect_answers[2]);
 				answers.push(data.correct_answer);
+				for(var j=0;j<4;j++)
+					{
+						var r=Math.floor(Math.random() * (3 - 0 + 1)) + 0;
+						var t=answers[0];
+						answers[0]=answers[r];
+						answers[r]=t;
+					}
 				category=data.category;
 				difficulty=data.difficulty;
 				    quiz.push({"question":data.question,"answers":{"0":answers[0], "1":answers[1], "2":answers[2], "3":answers[3]},"correct_answer":data.correct_answer,"id":Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10)+Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10)});
 						
 							i++;
+				console.log(data);
 										 });
 				res.render("solve/solvemore",{quiz:quiz,category:category,difficulty:difficulty});
 			}
@@ -460,10 +469,10 @@ function forgotpassword_middleware(req,res,next){
 	
 }
 
-app.listen(process.env.PORT,process.env.IP,function(){
+// app.listen(process.env.PORT,process.env.IP,function(){
+// console.log("App started");
+// });
+
+app.listen(3000,function(){
 console.log("App started");
 });
-
-// app.listen(3000,function(){
-// console.log("App started");
-//});
