@@ -5,6 +5,7 @@ var Forgot					=require("./models/pin");
 var Admin					=require("./models/admin");
 var NewUser					=require("./models/newuserpin");
 var Aptitude				=require("./models/aptitude");
+var PastContest				=require("./models/pastcontest");
 var mongoose 				=require("mongoose");
 var passport				=require("passport");
 var LocalStrategy			=require("passport-local");
@@ -332,6 +333,8 @@ app.post("/admin/signup",admin_middleware,function(req,res){
 app.get("/admin/dashboard",isAdminLoggedIn,function(req,res,next){
 		res.render("admin/dashboard");
 		});
+
+
 app.get("/admin/login",function(req,res){
 	res.render("./admin/login");
 });
@@ -355,7 +358,7 @@ app.post("/admin/aptitude",isAdminLoggedIn,function(req,res){
 	});
 });
 //=============================
-//		SOLVE APTITUDE
+//		SOLVE QUESTIONS
 //=============================
 app.get("/solve/aptitude",isLoggedIn,function(req,res){
 	Aptitude.find({},function(err,allquestions){
@@ -409,12 +412,53 @@ app.post("/solve/more",isLoggedIn,function(req,res){
 });
 	
 });
+
+app.get("/solve/pastcontest/",isLoggedIn,function(req,res){
+	// PastContest.create({contest_name:"aptitude_contest"},function(err,pastcontest){
+	// 	if(err)console.log(err);
+	// 	else{
+	// 		pastcontest.contest_questions.push({question:"this is my 1st past contest question",optionA:"A",optionB:"B",optionC:"C" ,optionD:"D",answer:"B"});
+			
+	// 		pastcontest.contest_questions.push({question:"this is my 2st past contest question",optionA:"wrong",optionB:"wrong",optionC:"wrong" ,optionD:"correct",answer:"D"});
+			
+	// 		pastcontest.contest_questions.push({question:"this is my 3st past contest question",optionA:"1",optionB:"2",optionC:"3" ,optionD:"4",answer:"A"});
+	// 		pastcontest.save(function(err,pastcontest){
+	// 			if(err)console.log(err);
+	// 			else {
+	// 				console.log(pastcontest);
+	// 			}
+	// 		});
+	// 	}
+	// });
+	
+	
+	PastContest.find({},function(err,pastcontest){
+		if(err){console.log(err);}
+		else
+			{  var contest_name_id=[];
+			 	
+			   pastcontest.forEach(function(contest){contest_name_id.push({"id":contest._id,"name":contest.contest_name});});
+				res.render("solve/pastcontest",{Contest:contest_name_id});
+			}
+	});
+	
+});
+app.get("/solve/pastcontest/:id",isLoggedIn,function(req,res){
+	PastContest.findById(req.params.id,function(err,pastcontest){
+		if(err)console.log(err);
+		else{console.log(pastcontest);
+			res.render("solve/solvepastcontest",{pastcontest:pastcontest});
+			}
+		
+	});
+});
 //=============================
 //	MIDDLEWARE FUNCTIONS
 //=============================
 function isLoggedIn(req,res,next){
 	if(req.isAuthenticated())
-		return next();
+	{
+		return next();}
 	else res.redirect("/login");
 }
 function isAdminLoggedIn(req,res,next){
@@ -469,10 +513,10 @@ function forgotpassword_middleware(req,res,next){
 	
 }
 
-app.listen(process.env.PORT,process.env.IP,function(){
-console.log("App started");
-});
-
-// app.listen(3000,function(){
+// app.listen(process.env.PORT,process.env.IP,function(){
 // console.log("App started");
 // });
+
+app.listen(3000,function(){
+console.log("App started");
+});

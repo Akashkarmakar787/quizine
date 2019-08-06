@@ -1,0 +1,12 @@
+<% include ../partials/header%>
+
+<%Contest.forEach(function(contest){%>
+<a href="/solve/pastcontest/<%=contest.id%>"><div style="width:150px;height:100px ;border:1px solid black;margin-top:3px;">
+	
+	<%=contest.name%>
+</div>
+</a>
+<%})%>
+
+
+<%include ../partials/footer%>

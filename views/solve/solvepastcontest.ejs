@@ -1,0 +1,68 @@
+<% include ../partials/header%>
+
+<h2>
+	<%=pastcontest.contest_name%>
+</h2>
+<%pastcontest.contest_questions.forEach(function(question){%>
+<strong>Question: <%=question.question%><br></strong>
+<%if(question.answer=="A"){%>
+<a onclick="funcC('<%=question._id%>')"> A: <%=question.optionA%></a><br>
+<%}else{%>
+<a onclick="funcW('<%=question._id%>')"> A: <%=question.optionA%></a><br>
+<%}%>
+
+
+<%if(question.answer=="B"){%>
+<a onclick="funcC('<%=question._id%>')"> B: <%=question.optionB%></a><br>
+<%}else{%>
+<a onclick="funcW('<%=question._id%>')"> B: <%=question.optionB%></a><br>
+<%}%>
+
+
+
+<%if(question.answer=="C"){%>
+<a onclick="funcC('<%=question._id%>')"> C: <%=question.optionC%></a><br>
+<%}else{%>
+<a onclick="funcW('<%=question._id%>')"> C: <%=question.optionC%></a><br>
+<%}%>
+
+
+<%if(question.answer=="D"){%>
+<a onclick="funcC('<%=question._id%>')"> D: <%=question.optionD%></a><br>
+<%}else{%>
+<a onclick="funcW('<%=question._id%>')"> D: <%=question.optionD%></a><br>
+<%}%>
+
+<p id="C<%=question._id%>" style="color:green;"></p>
+<p id="W<%=question._id%>" style="color:red;"></p>
+
+<br>
+<%})%>
+
+<script>
+function  funcC( id)
+	{ 
+	 
+		    document.getElementById("W"+id).innerHTML="";
+            document.getElementById("W"+id).style.display="none";
+		 document.getElementById("C"+id).style.display="";
+		   document.getElementById("C"+id).innerHTML="Correct Answer";
+		  
+		   
+		   
+	}
+function funcW( id)
+	{
+		
+			document.getElementById("C"+id).innerHTML="";
+			document.getElementById("C"+id).style.display="none";
+		document.getElementById("W"+id).style.display="";
+			document.getElementById("W"+id).innerHTML="Wrong Answer";
+			
+	}
+</script>
+
+
+
+
+<% include ../partials/footer%>
