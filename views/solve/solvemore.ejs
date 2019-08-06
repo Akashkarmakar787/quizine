@@ -1,0 +1,67 @@
+<% include ../partials/header%>
+<h3>
+Category: <%=category%>
+</h3>
+<h4>
+Difficulty level: <%=difficulty%>	
+</h4>
+<%  quiz.forEach(function(data){%>
+    <strong>Question: <%=data.question%><br></strong>
+<%if(data.correct_answer==data.answers["0"]){%>
+<a onclick="funcC('<%=data.id%>')"> A: <%=data.answers["0"]%></a><br>
+<%}else{%>
+<a onclick="funcW('<%=data.id%>')"> A: <%=data.answers["0"]%></a><br>
+<%}%>
+
+<%if(data.correct_answer==data.answers["1"]){%>
+<a onclick="funcC('<%=data.id%>')"> B: <%=data.answers["1"]%></a><br>
+<%}else{%>
+<a onclick="funcW('<%=data.id%>')"> B: <%=data.answers["1"]%></a><br>
+<%}%>
+
+
+<%if(data.correct_answer==data.answers["2"]){%>
+<a onclick="funcC('<%=data.id%>')"> C: <%=data.answers["2"]%></a><br>
+<%}else{%>
+<a onclick="funcW('<%=data.id%>')"> C: <%=data.answers["2"]%></a><br>
+<%}%>
+
+
+<%if(data.correct_answer==data.answers["3"]){%>
+<a onclick="funcC('<%=data.id%>')"> C: <%=data.answers["3"]%></a><br>
+<%}else{%>
+<a onclick="funcW('<%=data.id%>')"> C: <%=data.answers["3"]%></a><br>
+<%}%>
+
+<p id="C<%=data.id%>" style="color:green;"></p>
+<p id="W<%=data.id%>" style="color:red;"></p>
+
+<br>
+
+<%})%>
+<script>
+function  funcC( id)
+	{ 
+	 
+		    document.getElementById("W"+id).innerHTML="";
+            document.getElementById("W"+id).style.display="none";
+		 document.getElementById("C"+id).style.display="";
+		   document.getElementById("C"+id).innerHTML="Correct Answer";
+		  
+		   
+		   
+	}
+function funcW( id)
+	{
+		
+			document.getElementById("C"+id).innerHTML="";
+			document.getElementById("C"+id).style.display="none";
+		document.getElementById("W"+id).style.display="";
+			document.getElementById("W"+id).innerHTML="Wrong Answer";
+			
+	}
+</script>
+
+
+
+<% include ../partials/footer%>

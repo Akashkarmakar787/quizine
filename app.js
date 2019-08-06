@@ -10,6 +10,7 @@ var passport				=require("passport");
 var LocalStrategy			=require("passport-local");
 var nodemailer 				=require('nodemailer');
 var bodyparser				=require("body-parser");
+var request					=require("request");
 var app=express();
 
 //===================================================================================
@@ -362,6 +363,42 @@ app.get("/solve/aptitude",isLoggedIn,function(req,res){
 	        res.render("solve/solveaptitude",{questions:allquestions});		
 		}
 	});
+});
+app.get("/solve/more",isLoggedIn,function(req,res){
+	res.render("solve/more",{message:""});
+});
+app.post("/solve/more",isLoggedIn,function(req,res){
+	var link="https://opentdb.com/api.php?amount=5"+"&category="+req.body.category+"&difficulty="+req.body.difficulty+"&type=multiple";
+
+	request(link,function(error,response,body){
+
+	if(!error&&response.statusCode==200)
+		{   
+			var parseData=JSON.parse(body);
+			if(parseData.response_code!="0"){res.render("solve/more",{message:"some unexpected error occured"});}
+			else{
+				var quiz=[];
+				var i=0;
+				var category;
+				var difficulty;
+			parseData.results.forEach(function(data){
+				var answers=[];
+				answers.push(data.incorrect_answers[0]);
+				answers.push(data.incorrect_answers[1]);
+				answers.push(data.incorrect_answers[2]);
+				answers.push(data.correct_answer);
+				category=data.category;
+				difficulty=data.difficulty;
+				    quiz.push({"question":data.question,"answers":{"0":answers[0], "1":answers[1], "2":answers[2], "3":answers[3]},"correct_answer":data.correct_answer,"id":Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10)+Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10)});
+						
+							i++;
+										 });
+				res.render("solve/solvemore",{quiz:quiz,category:category,difficulty:difficulty});
+			}
+		  
+		}
+});
+	
 });
 //=============================
 //	MIDDLEWARE FUNCTIONS

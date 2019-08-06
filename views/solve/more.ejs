@@ -1,0 +1,52 @@
+<%include ../partials/header%>
+
+
+
+<div class="row" style="margin-top:5%">
+	<div class="col-sm-4">
+		
+	</div>
+	
+	<div class="col-sm-4">
+		<center>
+		<p style="color:red">
+			<%=message%>
+		</p>
+		</center>
+		<h2>
+			<center><strong>Select Category of Quiz</strong></center>
+		</h2>
+		<form method="post" action="/solve/more" Style="margin-top:3%;">
+  <div class="form-group">
+    <label for="exampleInputEmail1">Select Category</label>
+       <select name="category">
+		   <option value="21">Sports</option>
+		   <option value="23">Geography</option>
+		   <option value="22">History</option>
+	  </select>
+  </div>
+	<div class="form-group">
+    <label for="exampleInputEmail1">Difficulty level</label>
+		<select name="difficulty">
+		   <option value="easy">Easy</option>
+		   <option value="medium">Medium</option>
+		   <option value="hard">Hard</option>
+	  </select>
+  </div>
+ 			
+  
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+	</div>
+	<div class="col-sm-4">
+		
+	</div>
+	
+</div>
+
+
+
+
+
+<%include ../partials/footer%>
