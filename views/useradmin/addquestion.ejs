@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		
+	</head>
+	<body>
+		<form method="post"action="/useradmin/addquestion/<%=id%>/<%=n%>">
+			<%for(var i=1;i<=parseInt(n);i++){%>
+		        
+				<%=i%>. Question: <input type="text" placeholder="Question goes here" name="question<%=i%>" required="required"><br>
+							  	A: <input type="text" name="optionA<%=i%>" placeholder="Enter option 1" required="required"><br>
+								B: <input type="text" name="optionB<%=i%>" placeholder="Enter option 2" required="required"><br>
+								C: <input type="text" name="optionC<%=i%>" placeholder="Enter option 3" required="required"><br>
+								D: <input type="text" name="optionD<%=i%>" placeholder="Enter option 4" required="required"><br>
+								Answer: <select name="answer<%=i%>">
+								<option value="A">A</option>
+								<option value="B">B</option>
+								<option value="C">C</option>
+								<option value="D">D</option>
+								</select>
+								<br>
+								
+		    <%}%>	
+								<button>
+									Submit
+								</button>
+		</form>
+		
+	</body>
+</html>

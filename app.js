@@ -355,19 +355,21 @@ app.get("/admin/contestrequests",isAdminLoggedIn,function(req,res){
 });
 app.get("/admin/validate/contest/:id",isAdminLoggedIn,function(req,res){
 	ContestRequest.findById(req.params.id,function(err,request){
-		if(err){console.log(err);res.redirect("/admin/dashboard");}
+		if(err){console.log(err);res.redirect("/admin/contestrequests");}
 		else{
 			FutureContest.create({contest_name:request.contest_name,start_date:request.start_date,start_time:request.start_time,end_date:request.end_date,end_time:request.end_time,details:request.details,username:request.username},function(err,futurecontest){
 				if(err)console.log(err);
 				else{
 					console.log(futurecontest);
-					ContestRequest.findByIdAndDelete(req.params.id,function(err){console.log(err);res.redirect("/admin/dashboard");});
+					ContestRequest.findByIdAndDelete(req.params.id,function(err){
+						if(err){console.log(err);res.redirect("/admin/dashboard");}
+					});
 					var mailOptions = {
 		
                     from: 'aroy0761@gmail.com', // sender address 
                     to: futurecontest.username, // list of receivers 
                     subject: 'Contest Hosting', // Subject line 
-                    html: 'Go to the link and add questions for the contest. Your contest will start on the date and time you have provided. Link: https://goorm-ide-test-mhaxq.run.goorm.io/'+futurecontest._id+'/'+futurecontest.username  // html body 
+                    html: 'Go to the link and add questions for the contest. Your contest will start on the date and time you have provided. Link: https://goorm-ide-test-mhaxq.run.goorm.io/useradmin/'+futurecontest._id+'/'+futurecontest.username  // html body 
                 };
 
                 transporter.sendMail(mailOptions, function (err, info) {
@@ -558,6 +560,62 @@ app.post("/useradmin/hostcontest",isLoggedIn,function(req,res){
 	});
 	
 });
+app.get("/useradmin/:id/:username",function(req,res){
+	FutureContest.findById(req.params.id,function(err,futurecontest){
+		if(err){console.log(err);res.redirect("/");}
+		else{ console.log(futurecontest);
+			  if(futurecontest.__v==0)
+				  {
+					  res.render("useradmin/noofquestions",{id:req.params.id});
+				  }
+			  else{
+				  res.send("Your questions are save if you want any change or update contact Admins");
+			  }
+		}
+	});
+});
+app.post("/useradmin/contest/:id",function(req,res){
+	FutureContest.findById(req.params.id,function(err,futurecontest){
+		if(err){console.log(err);res.redirect("/");}
+		else{
+			if(futurecontest.__v==0)
+				{
+					res.render("useradmin/addquestion",{id:req.params.id,n:req.body.number});
+				}
+			 else{
+				  res.send("Your questions are saved if you want any change or update contact Admins");
+			  }
+		}
+	});
+});
+app.post("/useradmin/addquestion/:id/:n",function(req,res){
+	FutureContest.findById(req.params.id,function(err,futurecontest){
+		if(err){console.log(err);res.redirect("/");}
+		else{
+			if(futurecontest.__v==0)
+				{
+					for(var i=1;i<=parseInt(req.params.n);i++)
+						{
+	
+	 		futurecontest.contest_questions.push({question:req.body.(question+(i.toString())),optionA:req.body.(optionA+(i.toString())),optionB:req.body.(optionB+(i.toString())),optionC:req.body.(optionC+(i.toString())) ,optionD:req.body.(optionD+(i.toString())),answer:req.body.(answer+(i.toString()))});
+					
+// 					FutureContest.contest_questions.push({question:"this is my 2st past contest question",optionA:"wrong",optionB:"wrong",optionC:"wrong" ,optionD:"correct",answer:"D"});
+	 				futurecontest.save(function(err,fc){
+	 					if(err)console.log(err);
+	 					else {
+	 						console.log(fc);
+	 							}
+	 						});							
+						}
+					res.send("Successfully Saved");
+				}
+			else{
+				 res.send("Your questions are saved if you want any change or update contact Admins");
+			}
+		   }
+	});
+	
+});
 //=============================
 //	MIDDLEWARE FUNCTIONS
 //=============================
@@ -565,7 +623,7 @@ function isLoggedIn(req,res,next){
 	if(req.isAuthenticated())
 	{
 		return next();}
-	else res.redirect("/login");
+	else {res.redirect("/login");}
 }
 function isAdminLoggedIn(req,res,next){
 	if(req.isAuthenticated())
