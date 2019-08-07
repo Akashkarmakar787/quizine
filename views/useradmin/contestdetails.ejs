@@ -1,0 +1,15 @@
+<% include ../partials/header%>
+Upon submitting the form you will hear from us soon.....we will contact you by email 
+<form method="post" action="/useradmin/hostcontest">
+	Name of the contest: <input type="text" name="contestname" placeholder="contest name" required="required"><br>
+	Start Date: <input type="date" name="sdate" required="required"><br>
+	Start Time: <input type="time" name="stime" required="required"><br>
+	End Date: <input type="date" name="edate" required="required"><br>
+	End Time: <input type="time" name="etime" required="required"><br>
+	Description: <textarea name="details" required="required"></textarea><br>
+	Your Username:<input type="email" name="username" value="<%=currentUser.username%>" readonly><br>
+	<button>
+		submit
+	</button>
+</form>
+<% include ../partials/footer%>

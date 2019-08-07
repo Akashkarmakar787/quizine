@@ -1,0 +1,37 @@
+<%include ../partials/header%>
+<h3>Lists of Requests</h3>
+<%contestrequests.forEach(function(contestrequest){%>
+<div style="background-color:yellow;border:1px solid black">
+	<p>
+		Contest Name: <%=contestrequest.contest_name%>
+	</p>
+	<p>
+		Contest Start Date: <%=contestrequest.start_date%>
+	</p>
+	<p>
+		Contest Start Time: <%=contestrequest.start_time%>
+	</p>
+	<p>
+		Contest End Date: <%=contestrequest.end_date%>
+	</p>
+	<p>
+		Contest End Time: <%=contestrequest.end_time%>
+	</p>
+	<p>
+		Contest Description: <%=contestrequest.details%>
+	</p>
+	<a href="/admin/validate/contest/<%=contestrequest._id%>">
+		<button style="background-color:green;color:yellow">
+		Validate
+	</button>
+		</a>
+		<a href="/admin/delete/contest/<%=contestrequest._id%>">
+		<button style="background-color:red;color:yellow">
+		Delete
+	</button>
+		</a>
+		
+	
+</div>
+<%})%>
+<%include ../partials/footer%>

@@ -6,6 +6,8 @@ var Admin					=require("./models/admin");
 var NewUser					=require("./models/newuserpin");
 var Aptitude				=require("./models/aptitude");
 var PastContest				=require("./models/pastcontest");
+var ContestRequest			=require("./models/contestrequest");
+var FutureContest			=require("./models/futurecontest");
 var mongoose 				=require("mongoose");
 var passport				=require("passport");
 var LocalStrategy			=require("passport-local");
@@ -122,7 +124,7 @@ app.post("/forgotpassword",middleware,forgotpassword_middleware,function(req,res
 			}
 			else{
 			Forgot.findByIdAndDelete(olduser._id,function(err){
-				if(err){console.log(err);}
+				if(err){console.log(err);res.redirect("/");}
 				else{
 					Forgot.create({username:req.body.username,pin:otp},function(err,user){
 						if(err){console.log(err);}
@@ -149,7 +151,7 @@ app.post("/newpassword",middleware,function(req,res){
 			User.findOne({username:req.body.username},function(err,user){
 				console.log(user);
 				User.findByIdAndDelete(user._id,function(err){
-			if(err){console.log(err);}
+			if(err){console.log(err);res.redirect("/"); }
 			else{
 				
 				
@@ -225,9 +227,9 @@ app.post("/credentials",middleware,username_middleware,function(req,res){
 												
 												
 									NewUser.findByIdAndDelete(user._id,function(err){
-										
+										         if(err){console.log(err);res.redirect("/");}
 										NewUser.create({username:req.body.username,otp:otp},function(err,newuser){
-									   if(err){console.log(err);}
+									   if(err){console.log(err);res.redirect("/");}
 										else 
 											{
 						res.render("checkotp",{name:req.body.name,username:req.body.username,password:req.body.password,message:""});
@@ -341,8 +343,55 @@ app.get("/admin/login",function(req,res){
 app.post("/admin/login",passport.authenticate("local",{ 
 	successRedirect:"/admin/dashboard",
 	failureRedirect:"/admin/login"
-
 }),function(req,res){
+});
+app.get("/admin/contestrequests",isAdminLoggedIn,function(req,res){
+	ContestRequest.find({},function(err,contestrequests){
+		if(err)console.log(err);
+		else{
+			res.render("admin/contestrequests",{contestrequests:contestrequests});
+		}
+	});
+});
+app.get("/admin/validate/contest/:id",isAdminLoggedIn,function(req,res){
+	ContestRequest.findById(req.params.id,function(err,request){
+		if(err){console.log(err);res.redirect("/admin/dashboard");}
+		else{
+			FutureContest.create({contest_name:request.contest_name,start_date:request.start_date,start_time:request.start_time,end_date:request.end_date,end_time:request.end_time,details:request.details,username:request.username},function(err,futurecontest){
+				if(err)console.log(err);
+				else{
+					console.log(futurecontest);
+					ContestRequest.findByIdAndDelete(req.params.id,function(err){console.log(err);res.redirect("/admin/dashboard");});
+					var mailOptions = {
+		
+                    from: 'aroy0761@gmail.com', // sender address 
+                    to: futurecontest.username, // list of receivers 
+                    subject: 'Contest Hosting', // Subject line 
+                    html: 'Go to the link and add questions for the contest. Your contest will start on the date and time you have provided. Link: https://goorm-ide-test-mhaxq.run.goorm.io/'+futurecontest._id+'/'+futurecontest.username  // html body 
+                };
+
+                transporter.sendMail(mailOptions, function (err, info) {
+                    if(err){console.log(err);}
+					else {
+						res.redirect("/admin/contestrequests");
+						
+					}});
+	
+					
+					
+					
+					
+					/////////////
+					
+				}
+			});
+		}
+	});
+});
+app.get("/admin/delete/contest/:id",isAdminLoggedIn,function(req,res){
+	ContestRequest.findByIdAndDelete(req.params.id,function(err){if(err){console.log(err);res.redirect("/admin/delete");}
+																
+																else res.redirect("/admin/contestrequests");});
 	
 });
 //===============================
@@ -445,12 +494,69 @@ app.get("/solve/pastcontest/",isLoggedIn,function(req,res){
 });
 app.get("/solve/pastcontest/:id",isLoggedIn,function(req,res){
 	PastContest.findById(req.params.id,function(err,pastcontest){
-		if(err)console.log(err);
+		if(err){console.log(err);res.redirect("/dashboard");}
 		else{console.log(pastcontest);
 			res.render("solve/solvepastcontest",{pastcontest:pastcontest});
 			}
 		
 	});
+});
+//==================================
+//	USERADMIN ROUTES
+//==================================
+app.get("/useradmin/hostcontest/:username",isLoggedIn,function(req,res){
+	ContestRequest.findOne({username:req.params.username},function(err,user){
+		if(err)console.log(err);
+		else
+			{
+				if(!user)
+					{
+						FutureContest.findOne({username:req.params.username},function(err,futurecontest){
+							if(err)console.log(err);
+							else
+								{
+									if(!futurecontest){res.render("useradmin/contestdetails");}
+									else{
+										contest={contest_name:futurecontest.name,start_date:futurecontest.start_date,
+												end_date:futurecontest.end_date,start_time:futurecontest.start_time
+												,end_time:futurecontest.end_time,details:futurecontest.details}
+										res.render("useradmin/appliedcontest",{contest:contest});
+									}
+								}
+						});
+						
+					}
+				else{
+				         res.render("useradmin/appliedcontest",{contest:user});	
+				}
+					
+			}
+	});
+	
+});
+app.post("/useradmin/hostcontest",isLoggedIn,function(req,res){
+	console.log();
+	ContestRequest.findOne({username:req.body.username},function(err,user){
+		if(err)console.log(err);
+		else{
+			if(!user){
+				ContestRequest.create({start_date:req.body.sdate,end_date:req.body.edate,start_time:req.body.stime,end_time:req.body.etime, username:req.body.username, contest_name:req.body.contestname,details:req.body.details},function(err,contest){
+					if(err)console.log(err);
+					else{
+						console.log(contest);
+						res.redirect("/useradmin/hostcontest/"+contest.username);
+						//res.render("useradmin/appliedcontest",{contest:contest});
+					}
+				});
+				
+			}
+			else
+				{
+					res.render("useradmin/appliedcontest",{contest:user});
+				}
+		}
+	});
+	
 });
 //=============================
 //	MIDDLEWARE FUNCTIONS
@@ -513,10 +619,10 @@ function forgotpassword_middleware(req,res,next){
 	
 }
 
-app.listen(process.env.PORT,process.env.IP,function(){
-console.log("App started");
-});
-
-// app.listen(3000,function(){
+// app.listen(process.env.PORT,process.env.IP,function(){
 // console.log("App started");
 // });
+
+app.listen(3000,function(){
+console.log("App started");
+});
