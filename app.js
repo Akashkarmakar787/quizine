@@ -369,7 +369,7 @@ app.get("/admin/validate/contest/:id",isAdminLoggedIn,function(req,res){
                     from: 'aroy0761@gmail.com', // sender address 
                     to: futurecontest.username, // list of receivers 
                     subject: 'Contest Hosting', // Subject line 
-                    html: 'Go to the link and add questions for the contest. Your contest will start on the date and time you have provided. Link: https://goorm-ide-test-mhaxq.run.goorm.io/useradmin/'+futurecontest._id+'/'+futurecontest.username  // html body 
+                    html: 'Go to the link and add questions for the contest. Your contest will start on the date and time you have provided.Do not share this link with any one. Link: https://goorm-ide-test-mhaxq.run.goorm.io/useradmin/'+futurecontest._id+'/'+futurecontest.username  // html body 
                 };
 
                 transporter.sendMail(mailOptions, function (err, info) {
@@ -596,8 +596,10 @@ app.post("/useradmin/addquestion/:id/:n",function(req,res){
 				{
 					for(var i=1;i<=parseInt(req.params.n);i++)
 						{
-	
-	 		futurecontest.contest_questions.push({question:req.body.(question+(i.toString())),optionA:req.body.(optionA+(i.toString())),optionB:req.body.(optionB+(i.toString())),optionC:req.body.(optionC+(i.toString())) ,optionD:req.body.(optionD+(i.toString())),answer:req.body.(answer+(i.toString()))});
+	                       var v="question"+(i.toString());
+							console.log("hello world");
+							console.log(v);
+	 		futurecontest.contest_questions.push({question:req.body['question'+i.toString()],optionA:req.body['optionA'+i.toString()],optionB:req.body['optionB'+i.toString()],optionC:req.body['optionC'+i.toString()],optionD:req.body['optionD'+i.toString()],answer:req.body['answer'+i.toString()]});
 					
 // 					FutureContest.contest_questions.push({question:"this is my 2st past contest question",optionA:"wrong",optionB:"wrong",optionC:"wrong" ,optionD:"correct",answer:"D"});
 	 				futurecontest.save(function(err,fc){
