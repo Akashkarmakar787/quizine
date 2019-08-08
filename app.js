@@ -629,7 +629,12 @@ function isLoggedIn(req,res,next){
 }
 function isAdminLoggedIn(req,res,next){
 	if(req.isAuthenticated())
+	{  
+		if(req.user._id=="5d4578f878fbdc40f9a41a38")
 		return next();
+	    else res.redirect("/admin/login");
+	}
+	
 	else res.redirect("/admin/login");
 }
 function middleware(req,res,next){
@@ -679,10 +684,10 @@ function forgotpassword_middleware(req,res,next){
 	
 }
 
-app.listen(process.env.PORT,process.env.IP,function(){
-console.log("App started");
-});
-
-// app.listen(3000,function(){
+// app.listen(process.env.PORT,process.env.IP,function(){
 // console.log("App started");
 // });
+
+app.listen(3000,function(){
+console.log("App started");
+});
