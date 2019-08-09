@@ -1,0 +1,25 @@
+<% include ../partials/header %>
+<div class="container">
+  <div class="jumbotron">
+	  
+	  <h1><%= contestdetails["contestname"] %></h1><br>
+	<h1>
+		Contest Details:<%= contestdetails["details"] %>
+	  </h1><br>		  
+	 <h1>
+		 Time:
+	  </h1><br>
+	  <h2>
+		  Start Time:<%= contestdetails["starttime"]%>
+	  </h2><br>
+	  <h2>
+		  End Time:<%= contestdetails["endtime"]%>
+	  </h2>
+	  <br>
+	<button class="btn btn-primary btn-lrg">
+		Enter Test
+	</button>
+  </div>
+  
+</div>
+<% include ../partials/footer %>

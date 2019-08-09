@@ -8,12 +8,15 @@ var Aptitude				=require("./models/aptitude");
 var PastContest				=require("./models/pastcontest");
 var ContestRequest			=require("./models/contestrequest");
 var FutureContest			=require("./models/futurecontest");
+var PresentContest			=require("./models/presentcontest");
 var mongoose 				=require("mongoose");
 var passport				=require("passport");
 var LocalStrategy			=require("passport-local");
 var nodemailer 				=require('nodemailer');
 var bodyparser				=require("body-parser");
 var request					=require("request");
+var moment=require("moment");
+var tz=require("moment-timezone");
 var app=express();
 
 // to see the website visit https://shrouded-ridge-73828.herokuapp.com
@@ -92,7 +95,7 @@ app.post("/forgotpassword",middleware,forgotpassword_middleware,function(req,res
 	
 	////////////
 	
-		var otp=Math.floor((Math.random() * 100) + 54);
+		var otp=Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
 	var mailOptions = {
 		
                     from: 'aroy0761@gmail.com', // sender address 
@@ -195,7 +198,7 @@ app.post("/newpassword",middleware,function(req,res){
 
 app.get("/credentials",function(req,res){res.redirect("/");});
 app.post("/credentials",middleware,username_middleware,function(req,res){
-	var otp=Math.floor((Math.random() * 100) + 54);
+	var otp=Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
 	var mailOptions = {
 		
                     from: 'aroy0761@gmail.com', // sender address 
@@ -361,6 +364,118 @@ app.get("/admin/validate/contest/:id",isAdminLoggedIn,function(req,res){
 				if(err)console.log(err);
 				else{
 					console.log(futurecontest);
+					
+					
+					///////////////////changed
+	var sdate=futurecontest.start_date;
+	var edate=futurecontest.end_date;
+	var stime=futurecontest.start_time;
+	var etime=futurecontest.end_time;
+	
+	var m = moment.tz('Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss');
+	console.log(m);
+	var cdate=m.substring(0,10);
+	var ctime=m.substring(11,19);
+	console.log(cdate,ctime);
+	var date1=new Date(cdate);
+	var date2=new Date(sdate);
+	var startdiffdays = parseInt((date2 - date1) / (1000 * 60 * 60 * 24)); 
+	console.log(startdiffdays);
+		var trigger;
+    if(startdiffdays==0){
+		trigger=((parseInt(stime.substring(3,5))*60)+(parseInt(stime.substring(0,2))*60*60))-
+			((parseInt(ctime.substring(6,8)))+(parseInt(ctime.substring(3,5))*60)+(parseInt(ctime.substring(0,2))*60*60));
+	}
+	else{
+		
+		trigger=((startdiffdays-1)*24*60*60)+24*60*60-
+			((parseInt(ctime.substring(6,8)))+(parseInt(ctime.substring(3,5))*60)+(parseInt(ctime.substring(0,2))*60*60))+
+			((parseInt(stime.substring(3,5))*60)+(parseInt(stime.substring(0,2))*60*60));
+		
+		
+	}
+					
+	console.log(trigger);
+    setTimeout(function(id){
+		//console.log(id);
+FutureContest.findById(id,function(err,contest){
+	
+	
+	
+	PresentContest.create({
+		contest_name:contest.contest_name,start_date:contest.start_date,start_time:contest.start_time,end_date:contest.end_date,end_time:contest.end_time,details:contest.details,username:contest.username,contest_questions:contest.contest_questions
+		
+		
+		
+	},function(err,presentcontest){
+		if(err)console.log(err);
+						  console.log(presentcontest);
+		FutureContest.findByIdAndDelete(id,function(err){console.log(err);});
+		///
+		
+		
+		var sdate=presentcontest.start_date;
+	var edate=presentcontest.end_date;
+	var stime=presentcontest.start_time;
+	var etime=presentcontest.end_time;
+	
+	var m = moment.tz('Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss');
+	console.log(m);
+	var cdate=m.substring(0,10);
+	var ctime=m.substring(11,19);
+	console.log(cdate,ctime);
+	var date1=new Date(cdate);
+	var date2=new Date(sdate);
+	var startdiffdays = parseInt((date2 - date1) / (1000 * 60 * 60 * 24)); 
+	console.log(startdiffdays);
+		var tr;
+    if(startdiffdays==0){
+		tr=((parseInt(stime.substring(3,5))*60)+(parseInt(stime.substring(0,2))*60*60))-
+			((parseInt(ctime.substring(6,8)))+(parseInt(ctime.substring(3,5))*60)+(parseInt(ctime.substring(0,2))*60*60))+
+			
+			((parseInt(etime.substring(3,5))*60)+(parseInt(etime.substring(0,2))*60*60))-
+			((parseInt(stime.substring(3,5))*60)+(parseInt(stime.substring(0,2))*60*60));
+	}
+	else{
+		
+		tr=((startdiffdays-1)*24*60*60)+24*60*60-
+			((parseInt(ctime.substring(6,8)))+(parseInt(ctime.substring(3,5))*60)+(parseInt(ctime.substring(0,2))*60*60))+
+			((parseInt(stime.substring(3,5))*60)+(parseInt(stime.substring(0,2))*60*60));
+		
+		
+	}
+		
+		
+		///
+		setTimeout(function(pid){
+			console.log(pid);
+			PresentContest.findById(pid,function(err,pc){
+				PastContest.create(				{contest_name:pc.contest_name,start_date:pc.start_date,start_time:pc.start_time,end_date:pc.end_date,end_time:pc.end_time,details:pc.details,username:pc.username,contest_questions:pc.contest_questions},function(err,pastc){
+					console.log(pastc);
+					
+					
+					PresentContest.findByIdAndDelete(pid,function(err){
+						if(err)console.log(err);
+					});
+				});
+				
+				
+			});
+			
+			
+			
+		},tr*1000,presentcontest._id);
+						  
+	
+	});
+});
+	
+		
+	
+	
+	},trigger*1000,futurecontest._id);
+					
+					///////////////////
 					ContestRequest.findByIdAndDelete(req.params.id,function(err){
 						if(err){console.log(err);res.redirect("/admin/dashboard");}
 					});
@@ -588,6 +703,7 @@ app.post("/useradmin/contest/:id",function(req,res){
 		}
 	});
 });
+////
 app.post("/useradmin/addquestion/:id/:n",function(req,res){
 	FutureContest.findById(req.params.id,function(err,futurecontest){
 		if(err){console.log(err);res.redirect("/");}
@@ -618,6 +734,91 @@ app.post("/useradmin/addquestion/:id/:n",function(req,res){
 	});
 	
 });
+//============================
+// 		CONTEST ROUTES
+//============================
+
+app.get("/contest/contest_register/:id",isLoggedIn,function(req,res){
+	       participants.findOne({pname:req.params.id},function(err,parti){
+			   if(err)console.log(err);
+			   else
+				   {
+					   if(!parti)
+						   {
+							   participants.create({pname:req.params.id,rank:"",score:""},function(err,participant){
+								if(err)
+								console.log("error!!");
+									else
+									{
+										console.log(participant);
+										var message="You are now registered";
+									res.render("contest/contest_schedule",{message:message});
+									}
+			});
+							   
+						   }
+					   else{
+						   var message="Already Registered";
+						   res.render("contest/contest_schedule",{message:message});
+					   }
+				   }
+		   });
+			 
+		
+});
+
+app.get("/contestdetails/:id",isLoggedIn,function(req,res){
+	FutureContest.findById(req.params.id,function(err,contest){
+		if(err){console.log(err);res.redirect("/dashboard");}
+		else{
+			contestdetails={"contestname":contest.contest_name,"startdate":contest.start_date,"enddate":contest.end_date,
+						"starttime":contest.start_time,"endtime":contest.end_time,"details":contest.details};
+			res.render("contest/contestinfo",{contestdetails:contestdetails});
+			
+		}
+	});
+});
+app.get("/contestinfo",isLoggedIn,function(req,res){
+	var message="";
+	FutureContest.find({},function(err,contestinfo){
+		if(err)
+			console.log(err);
+		else
+			{
+				console.log(contestinfo);
+				contest=[];
+				
+	contestinfo.forEach(function(cn){contest.push({"contest_name":cn.contest_name,"contest_sdate":cn.start_date,"contest_edate":cn.end_date,
+											"st_time":cn.start_time,"et_time":cn.end_time,   
+														"id":cn._id});
+												 
+												});
+				res.render("contest/contest_schedule",{contest:contest,message:message});
+			}
+	});
+});
+
+app.get("/contest/leaderboard",function(req,res){
+	res.render("contest/leaderboard");
+});
+
+
+
+
+app.get("/contest/countdown",function(req,res){
+	res.render("timer");
+});
+
+
+
+
+
+
+
+
+
+
+
 //=============================
 //	MIDDLEWARE FUNCTIONS
 //=============================
@@ -684,10 +885,43 @@ function forgotpassword_middleware(req,res,next){
 	
 }
 
-app.listen(process.env.PORT,process.env.IP,function(){
-console.log("App started");
-});
-
-// app.listen(3000,function(){
+// app.listen(process.env.PORT,process.env.IP,function(){
 // console.log("App started");
 // });
+
+app.listen(3000,function(){
+console.log("App started");
+});
+////////////////////////////////////////////////testing
+app.get("/testing",function(req,res){res.render("testing");});
+app.post("/testing",function(req,res){
+	
+	
+	
+	
+	
+	
+	
+	var cur=new Date();
+	var current_hour = cur.getHours();
+	console.log(current_hour);
+	console.log(cur.toISOString());
+	var curdate=cur.toISOString().substring(0,10);
+	console.log(curdate);
+	console.log(req.body.sd);
+var date1 = new Date(req.body.sd);
+var date2 = new Date(curdate);
+var diffDays = parseInt((date1 - date2) / (1000 * 60 * 60 * 24)); //gives day difference 
+//one_day means 1000*60*60*24
+//one_hour means 1000*60*60
+//one_minute means 1000*60
+//one_second means 1000
+console.log(diffDays)
+});
+setTimeout(function(){
+	
+var m = moment.tz('Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss');
+console.log(m);
+	console.log()},3*1000);
+
+

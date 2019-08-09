@@ -1,15 +1,40 @@
 <% include ../partials/header%>
-Upon submitting the form you will hear from us soon.....we will contact you by email 
+<h3 style="color:red">
+Upon submitting the form you will hear from us soon.....we will contact you by email 	
+</h3>
 <form method="post" action="/useradmin/hostcontest">
-	Name of the contest: <input type="text" name="contestname" placeholder="contest name" required="required"><br>
-	Start Date: <input type="date" name="sdate" required="required"><br>
-	Start Time: <input type="time" name="stime" required="required"><br>
-	End Date: <input type="date" name="edate" required="required"><br>
-	End Time: <input type="time" name="etime" required="required"><br>
-	Description: <textarea name="details" required="required"></textarea><br>
-	Your Username:<input type="email" name="username" value="<%=currentUser.username%>" readonly><br>
-	<button>
-		submit
-	</button>
+	<div style="background-color:#E8F6F3;margin-left:20px;margin-right:20px;">
+		<div class="form-group">
+		<label>Name of the contest:</label>
+		<input type="text" class="form-control" name="contestname" placeholder="contest name" required="required">
+	</div>
+	<div class="form-group">
+		<label>Starting Date of the contest: </label>
+		<input type="date" class="form-control" name="sdate" required="required">
+	</div>
+	<div class="form-group">
+		<label>Starting Time of the contest: </label>
+		<input type="time" class="form-control" name="stime" required="required">
+	</div>
+	<div class="form-group">
+		<label>Ending Date of the contest: </label>
+		<input type="date"class="form-control" name="edate" required="required">
+	</div>
+	<div class="form-group">
+		<label>Ending Time of the contest: </label>
+		<input type="time" class="form-control" name="etime" required="required">
+	</div>
+	<div class="form-group">
+		<label>Description: </label>
+		<textarea name="details" class="form-control" required="required"></textarea>
+	</div>
+	<div class="form-group">
+		<label>Your Username: </label>
+		<input type="email" class="form-control" name="username" value="<%=currentUser.username%>" readonly>
+	</div> 
+<center><button type="submit" class="btn btn-primary">Submit</button></center>
+	<br><br>
+	</div>
+	
 </form>
 <% include ../partials/footer%>

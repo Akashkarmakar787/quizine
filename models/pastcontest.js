@@ -6,8 +6,13 @@ var ContestQuestionSchema=new mongoose.Schema({
 
 /////////////////////////////////////////////////////////////
 var PastContestSchema=new mongoose.Schema({
-	
 	contest_name:String,
+	username:String,
+	start_date:String,
+	start_time:String,
+	end_date:String,
+	end_time:String,
+	details:String,
 	contest_questions:[ContestQuestionSchema]
 	
 	});

@@ -1,29 +1,99 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+
 	</head>
 	<body>
+		<center>
+			<h2 style="color:red;">
+			**Once you submit you cannot alter it. Take extra care while filling out form**
+		</h2>
+		</center>
+		
 		<form method="post"action="/useradmin/addquestion/<%=id%>/<%=n%>">
 			<%for(var i=1;i<=parseInt(n);i++){%>
-		        
-				<%=i%>. Question: <input type="text" placeholder="Question goes here" name="question<%=i%>" required="required"><br>
-							  	A: <input type="text" name="optionA<%=i%>" placeholder="Enter option 1" required="required"><br>
-								B: <input type="text" name="optionB<%=i%>" placeholder="Enter option 2" required="required"><br>
-								C: <input type="text" name="optionC<%=i%>" placeholder="Enter option 3" required="required"><br>
-								D: <input type="text" name="optionD<%=i%>" placeholder="Enter option 4" required="required"><br>
-								Answer: <select name="answer<%=i%>">
+		        <%if(i%2==0){%>
+			<div style="background-color:#EAFAF1;border:1px solid #117A65;margin-left:20px;margin-right:20px;">
+			<div class="form-group">
+    		<label for="formGroupExampleInput"><%=i%>. Question: </label>
+			<input type="text" class="form-control" placeholder="Question goes here" name="question<%=i%>" required="required">
+  			</div>
+			<div class="form-group">
+    		<label for="formGroupExampleInput">Option A </label>
+			<input type="text" class="form-control" placeholder="Enter option A" name="optionA<%=i%>" required="required">
+  			</div>
+			<div class="form-group">
+    		<label for="formGroupExampleInput">Option B: </label>
+			<input type="text" class="form-control" placeholder="Enter option B" name="optionB<%=i%>" required="required">
+  			</div>
+			<div class="form-group">
+    		<label for="formGroupExampleInput">Option C: </label>
+			<input type="text" class="form-control" placeholder="Enter option C" name="optionC<%=i%>" required="required">
+  			</div>
+			<div class="form-group">
+    		<label for="formGroupExampleInput">Option D : </label>
+			<input type="text" class="form-control" placeholder="Enter option D" name="optionD<%=i%>" required="required">
+  			</div>
+			<div class="form-group">
+    		<label for="formGroupExampleInput">Correct Answer: </label>
+				<select name="answer<%=i%>" class="form-control" name="answer<%=i%>">
 								<option value="A">A</option>
 								<option value="B">B</option>
 								<option value="C">C</option>
 								<option value="D">D</option>
-								</select>
-								<br>
-								
+				</select>
+  			</div>
+			</div>
+			
+			<%}else{%>
+			
+			
+			
+			
+			
+			<div style="background-color:#FEF9E7 ;border:1px solid #F1C40F;margin-left:20px;margin-right:20px;">
+			<div class="form-group">
+    		<label for="formGroupExampleInput"><%=i%>. Question: </label>
+			<input type="text" class="form-control" placeholder="Question goes here" name="question<%=i%>" required="required">
+  			</div>
+			<div class="form-group">
+    		<label for="formGroupExampleInput">Option A </label>
+			<input type="text" class="form-control" placeholder="Enter option A" name="optionA<%=i%>" required="required">
+  			</div>
+			<div class="form-group">
+    		<label for="formGroupExampleInput">Option B: </label>
+			<input type="text" class="form-control" placeholder="Enter option B" name="optionB<%=i%>" required="required">
+  			</div>
+			<div class="form-group">
+    		<label for="formGroupExampleInput">Option C: </label>
+			<input type="text" class="form-control" placeholder="Enter option C" name="optionC<%=i%>" required="required">
+  			</div>
+			<div class="form-group">
+    		<label for="formGroupExampleInput">Option D : </label>
+			<input type="text" class="form-control" placeholder="Enter option D" name="optionD<%=i%>" required="required">
+  			</div>
+			<div class="form-group">
+    		<label for="formGroupExampleInput">Correct Answer: </label>
+				<select name="answer<%=i%>" class="form-control" name="answer<%=i%>">
+								<option value="A">A</option>
+								<option value="B">B</option>
+								<option value="C">C</option>
+								<option value="D">D</option>
+				</select>
+  			</div>
+			</div>
+			
+				 
+			<%}%>		  	
+				<br>
+				<br>
+				<br>
+				<br>
 		    <%}%>	
-								<button>
-									Submit
-								</button>
+							  <center><button type="submit" class="btn btn-primary">Submit</button></center>
+			<br>
+
 		</form>
 		
 	</body>

@@ -1,0 +1,103 @@
+<% include ../partials/header %>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+	<script src="timer"></script>
+	
+	<!-- <script>
+		function registration(){
+			document.getElementById("rg").textContent="Registered";
+		}
+	</script> -->
+</head>
+<body>
+<!--  Live Contests-->
+<div class="container">
+  <!-- <h2>Live Contests</h2>
+  <p>Participate and grab in a bag full of exciting prizes and goodies!</p>                                                                                      
+  <div class="table-responsive">          
+  <table class="table">
+    <thead>
+      <tr>
+        <th>CODE</th>
+        <th>NAME</th>
+        <th>START</th>
+        <th>END</th>
+		<th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>QZTHN</td>
+        <td><a href="/contestinfo">QUIZATHON</a></td>
+        <td><a href="/contest/countdown" target="blank" onclick="get_time()" id="tm">2019/8/6</a><br>02:00:00</td>
+		<td><a href="/contest/countdown"target="blank" id="tm">2019/8/6</a><br>04:00:00</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>	
+</div> -->
+<!-- Upcoming Contests -->
+	<div class="container">
+  <h2>Upcoming Contests</h2>
+  <p>Mark! the calendar for these dates and never miss a challenge!</p>                                                                                      
+  <div class="table-responsive">          
+  <table class="table">
+    <thead>
+      <tr>
+        <th>NAME</th>
+        <th>START</th>
+        <th>END</th>
+		<th></th>
+		<th></th>
+      </tr>
+    </thead>
+	  <%contest.forEach(function(c){%>
+    <tbody>
+      <tr>
+		   
+        <td><a href="/contestdetails/<%=c["id"]%>"><h1><%= c["contest_name"] %></h1></a></td>
+        <td><a href="/contest/countdown" target="blank"><%= c["contest_sdate"] %></a><br><%= c["st_time"] %></td>
+		<td><a href="/contest/countdown"target="blank"><%= c["contest_edate"] %></a><br><%= c["et_time"] %></td>
+		<td><a href="/contest_register/<%= currentUser.username %>"><button class="btn btn-primary btn-m" id="rg">Register</button></a></td>
+      	<td><%= message %></td>
+		  
+	  </tr>
+		
+    </tbody>
+	   <%})%> 
+  </table>
+  </div>	
+</div>
+	
+<!-- 	Past Contests -->
+	<!-- <div class="container">
+	<h2>Past Contests</h2>
+  <p>Practice from past archived contests and gear up for your next challenge!</p>                                                                                      
+  <div class="table-responsive">          
+  <table class="table">
+    <thead>
+      <tr>
+        <th>CODE</th>
+        <th>NAME</th>
+        <th>START</th>
+        <th>END</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>QZTHN</td>
+        <td>QUIZATHON</td>
+        <td>5 Sep 2019<br>02:00:00</td>
+		<td>5 Sep 2019<br>04:00:00</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+	</div> -->
+ 
+<% include ../partials/footer %>
