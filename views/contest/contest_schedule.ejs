@@ -17,30 +17,36 @@
 <body>
 <!--  Live Contests-->
 <div class="container">
-  <!-- <h2>Live Contests</h2>
-  <p>Participate and grab in a bag full of exciting prizes and goodies!</p>                                                                                      
+  <h2>Live Contests</h2>
+  <p>Mark! the calendar for these dates and never miss a challenge!</p>                                                                                      
   <div class="table-responsive">          
   <table class="table">
     <thead>
       <tr>
-        <th>CODE</th>
         <th>NAME</th>
         <th>START</th>
         <th>END</th>
 		<th></th>
+		<th></th>
       </tr>
     </thead>
+	  <%prc.forEach(function(c){%>
     <tbody>
       <tr>
-        <td>QZTHN</td>
-        <td><a href="/contestinfo">QUIZATHON</a></td>
-        <td><a href="/contest/countdown" target="blank" onclick="get_time()" id="tm">2019/8/6</a><br>02:00:00</td>
-		<td><a href="/contest/countdown"target="blank" id="tm">2019/8/6</a><br>04:00:00</td>
-      </tr>
+		   
+        <td><a href="/contestdetails/<%=c["id"]%>"><h1><%= c["contest_name"] %></h1></a></td>
+        <td><a href="/contest/countdown" target="blank"><%= c["contest_sdate"] %></a><br><%= c["st_time"] %></td>
+		<td><a href="/contest/countdown"target="blank"><%= c["contest_edate"] %></a><br><%= c["et_time"] %></td>
+		<td><a href="/contest/start/<%= currentUser.username %>"><button class="btn btn-primary btn-m" id="rg">Start Solving</button></a></td>
+      	<td><%= message %></td>
+		  
+	  </tr>
+		
     </tbody>
+	   <%})%> 
   </table>
   </div>	
-</div> -->
+</div>
 <!-- Upcoming Contests -->
 	<div class="container">
   <h2>Upcoming Contests</h2>
@@ -75,29 +81,35 @@
 </div>
 	
 <!-- 	Past Contests -->
-	<!-- <div class="container">
-	<h2>Past Contests</h2>
-  <p>Practice from past archived contests and gear up for your next challenge!</p>                                                                                      
+	<div class="container">
+  <h2>Past Contests</h2>
   <div class="table-responsive">          
   <table class="table">
     <thead>
       <tr>
-        <th>CODE</th>
         <th>NAME</th>
         <th>START</th>
         <th>END</th>
+		<th></th>
+		<th></th>
       </tr>
     </thead>
+	  <%pc.forEach(function(c){%>
     <tbody>
       <tr>
-        <td>QZTHN</td>
-        <td>QUIZATHON</td>
-        <td>5 Sep 2019<br>02:00:00</td>
-		<td>5 Sep 2019<br>04:00:00</td>
-      </tr>
+		   
+        <td><a href="/contestdetails/<%=c["id"]%>"><h1><%= c["contest_name"] %></h1></a></td>
+        <td><a href="/contest/countdown" target="blank"><%= c["contest_sdate"] %></a><br><%= c["st_time"] %></td>
+		<td><a href="/contest/countdown"target="blank"><%= c["contest_edate"] %></a><br><%= c["et_time"] %></td>
+		<td><a href="/contest_register/<%= currentUser.username %>"><button class="btn btn-primary btn-m" id="rg">Register</button></a></td>
+      	<td><%= message %></td>
+		  
+	  </tr>
+		
     </tbody>
+	   <%})%> 
   </table>
-  </div>
-	</div> -->
+  </div>	
+</div>
  
 <% include ../partials/footer %>

@@ -78,7 +78,7 @@ var transporter = nodemailer.createTransport({
 
 
 
-app.get("/",function(req,res){res.render("index"); });
+app.get("/",dashboardmiddleware,function(req,res){res.render("index"); });
 app.get("/signup",function(req,res){
 	res.render("signup",{message:""});
 });
@@ -786,14 +786,39 @@ app.get("/contestinfo",isLoggedIn,function(req,res){
 		else
 			{
 				console.log(contestinfo);
-				contest=[];
+				 var upcommingcontest=[];
 				
-	contestinfo.forEach(function(cn){contest.push({"contest_name":cn.contest_name,"contest_sdate":cn.start_date,"contest_edate":cn.end_date,
+	contestinfo.forEach(function(cn){upcommingcontest.push({"contest_name":cn.contest_name,"contest_sdate":cn.start_date,"contest_edate":cn.end_date,
 											"st_time":cn.start_time,"et_time":cn.end_time,   
 														"id":cn._id});
 												 
 												});
-				res.render("contest/contest_schedule",{contest:contest,message:message});
+				
+				PastContest.find({},function(err,pastc){
+					if(err){console.log(err);}
+					else{
+						var pastcontest=[];
+						pastc.forEach(function(pc){pastcontest.push({"contest_name":pc.contest_name,"contest_sdate":pc.start_date,"contest_edate":pc.end_date,
+											"st_time":pc.start_time,"et_time":pc.end_time,   
+														"id":pc._id});
+												 
+												});
+					PresentContest.find({},function(err,prec){
+						if(err)console.log(err);
+						else{
+							var presentcontest=[];
+							prec.forEach(function(prc){presentcontest.push({"contest_name":prc.contest_name,"contest_sdate":prc.start_date,"contest_edate":prc.end_date,
+											"st_time":prc.start_time,"et_time":prc.end_time,   
+														"id":prc._id});
+												 
+												});
+							
+						res.render("contest/contest_schedule",{contest:upcommingcontest,prc:presentcontest,pc:pastcontest,message:message});	
+						}
+					});
+					}
+				});
+				
 			}
 	});
 });
@@ -837,6 +862,14 @@ function isAdminLoggedIn(req,res,next){
 	}
 	
 	else res.redirect("/admin/login");
+}
+function dashboardmiddleware(req,res,next){
+	if(req.isAuthenticated()){
+		res.redirect("/dashboard");
+	}
+	else{
+		return next();
+	}
 }
 function middleware(req,res,next){
 	if(!req.body.username)res.redirect("/");
