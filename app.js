@@ -9,6 +9,7 @@ var PastContest				=require("./models/pastcontest");
 var ContestRequest			=require("./models/contestrequest");
 var FutureContest			=require("./models/futurecontest");
 var PresentContest			=require("./models/presentcontest");
+var participants			=require("./models/participants");
 var mongoose 				=require("mongoose");
 var passport				=require("passport");
 var LocalStrategy			=require("passport-local");
@@ -403,7 +404,7 @@ FutureContest.findById(id,function(err,contest){
 	
 	
 	PresentContest.create({
-		contest_name:contest.contest_name,start_date:contest.start_date,start_time:contest.start_time,end_date:contest.end_date,end_time:contest.end_time,details:contest.details,username:contest.username,contest_questions:contest.contest_questions
+		contest_id:id,contest_name:contest.contest_name,start_date:contest.start_date,start_time:contest.start_time,end_date:contest.end_date,end_time:contest.end_time,details:contest.details,username:contest.username,contest_questions:contest.contest_questions
 		
 		
 		
@@ -450,7 +451,7 @@ FutureContest.findById(id,function(err,contest){
 		setTimeout(function(pid){
 			console.log(pid);
 			PresentContest.findById(pid,function(err,pc){
-				PastContest.create(				{contest_name:pc.contest_name,start_date:pc.start_date,start_time:pc.start_time,end_date:pc.end_date,end_time:pc.end_time,details:pc.details,username:pc.username,contest_questions:pc.contest_questions},function(err,pastc){
+				PastContest.create(				{contest_id:pc.contest_id,contest_name:pc.contest_name,start_date:pc.start_date,start_time:pc.start_time,end_date:pc.end_date,end_time:pc.end_time,details:pc.details,username:pc.username,contest_questions:pc.contest_questions},function(err,pastc){
 					console.log(pastc);
 					
 					
@@ -678,7 +679,9 @@ app.post("/useradmin/hostcontest",isLoggedIn,function(req,res){
 app.get("/useradmin/:id/:username",function(req,res){
 	FutureContest.findById(req.params.id,function(err,futurecontest){
 		if(err){console.log(err);res.redirect("/");}
-		else{ console.log(futurecontest);
+		else{ 
+			   if(futurecontest.length==0)res.redirect("/");
+			console.log(futurecontest);
 			  if(futurecontest.__v==0)
 				  {
 					  res.render("useradmin/noofquestions",{id:req.params.id});
@@ -693,6 +696,7 @@ app.post("/useradmin/contest/:id",function(req,res){
 	FutureContest.findById(req.params.id,function(err,futurecontest){
 		if(err){console.log(err);res.redirect("/");}
 		else{
+			  if(futurecontest.length==0)res.redirect("/");
 			if(futurecontest.__v==0)
 				{
 					res.render("useradmin/addquestion",{id:req.params.id,n:req.body.number});
@@ -708,6 +712,7 @@ app.post("/useradmin/addquestion/:id/:n",function(req,res){
 	FutureContest.findById(req.params.id,function(err,futurecontest){
 		if(err){console.log(err);res.redirect("/");}
 		else{
+			   if(futurecontest.length==0)res.redirect("/");
 			if(futurecontest.__v==0)
 				{
 					for(var i=1;i<=parseInt(req.params.n);i++)
@@ -738,28 +743,59 @@ app.post("/useradmin/addquestion/:id/:n",function(req,res){
 // 		CONTEST ROUTES
 //============================
 
-app.get("/contest/contest_register/:id",isLoggedIn,function(req,res){
-	       participants.findOne({pname:req.params.id},function(err,parti){
+app.get("/contest/register/:username/:id",isLoggedIn,function(req,res){
+	       participants.findOne({contest_id:req.params.id},function(err,participant){
 			   if(err)console.log(err);
 			   else
 				   {
-					   if(!parti)
+					   if(!participant)
 						   {
-							   participants.create({pname:req.params.id,rank:"",score:""},function(err,participant){
+							   participants.create({contest_id:req.params.id},function(err,p){
 								if(err)
-								console.log("error!!");
+								console.log(err);
 									else
 									{
 										console.log(participant);
-										var message="You are now registered";
-									res.render("contest/contest_schedule",{message:message});
+										p.contestant.push({username:req.params.username,score:""});
+										p.save(function(err,succ){
+											if(err)console.log(err);
+										});
+											var message="You are now registered";
+									res.redirect("/contestinfo");
+									
+										
+										
 									}
 			});
 							   
 						   }
 					   else{
-						   var message="Already Registered";
-						   res.render("contest/contest_schedule",{message:message});
+						   //console.log("checking",participant);
+						   var flag=0;
+						   participant.contestant.forEach(function(p){
+							   console.log(p);
+							   if(p.username==req.params.username)
+								   {  flag=1;
+									   
+								   }
+							  // if(p.username==req.params.username){
+							  // res.send("already registered");
+							  // var message="Already Registered";
+							  // res.render("/contestinfo");
+							  // }
+							   
+						   });
+						   if(flag==1)res.redirect("/contestinfo");
+						   else{
+							    participant.contestant.push({username:req.params.username,score:""});
+						   participant.save(function(err,succ){
+							   if(err)console.log(err);
+						   });
+						   var message="You are now registered";
+									res.redirect("/contestinfo");
+							
+						   }
+						  r		
 					   }
 				   }
 		   });
@@ -800,7 +836,7 @@ app.get("/contestinfo",isLoggedIn,function(req,res){
 						var pastcontest=[];
 						pastc.forEach(function(pc){pastcontest.push({"contest_name":pc.contest_name,"contest_sdate":pc.start_date,"contest_edate":pc.end_date,
 											"st_time":pc.start_time,"et_time":pc.end_time,   
-														"id":pc._id});
+														"contest_id":pc.contest_id});
 												 
 												});
 					PresentContest.find({},function(err,prec){
@@ -809,7 +845,7 @@ app.get("/contestinfo",isLoggedIn,function(req,res){
 							var presentcontest=[];
 							prec.forEach(function(prc){presentcontest.push({"contest_name":prc.contest_name,"contest_sdate":prc.start_date,"contest_edate":prc.end_date,
 											"st_time":prc.start_time,"et_time":prc.end_time,   
-														"id":prc._id});
+														"contest_id":prc.contest_id});
 												 
 												});
 							
@@ -822,7 +858,56 @@ app.get("/contestinfo",isLoggedIn,function(req,res){
 			}
 	});
 });
-
+app.get("/contest/start/:username/:contest_id",isLoggedIn,function(req,res){
+	
+	PresentContest.findOne({contest_id:req.params.contest_id},function(err,presentcontest){
+		if(!presentcontest){res.redirect("/contestinfo");}
+		else{
+			participants.findOne({contest_id:req.params.contest_id},function(err,participant){
+				
+				if(!participant||participant.length==0){res.send("no contest found");}
+				else{
+						
+					var flag=0;
+					participant.contestant.forEach(function(c){
+						
+						if(c.username==req.params.username)
+							{flag=1;}
+					});
+					if(flag==0){res.send("you have not registered");}
+					else{
+						     console.log("mic testing");
+						
+								console.log(presentcontest);
+					var contest_questions=[];
+						if(!presentcontest.contest_questions)res.redirect("/contestinfo");
+						
+					 presentcontest.contest_questions.forEach(function(q){
+						contest_questions.push({"question":q.question,
+											  "optionA":q.optionA,
+											   "optionB":q.optionB,
+											   "optionC":q.optionC,
+											   "optionD":q.optionD}
+											  );
+						 });
+						
+						
+						
+					res.render("contest/livecontest",{start_time:presentcontest.start_time,end_time:presentcontest.end_time,start_date:presentcontest.start_date, end_date:presentcontest.end_date, contest_name:presentcontest.contest_name,contest_questions:contest_questions,contest_id:presentcontest.contest_id});
+						
+						
+						
+					}
+				}
+			});
+		}
+	});
+	
+	
+	
+	
+	
+});
 app.get("/contest/leaderboard",function(req,res){
 	res.render("contest/leaderboard");
 });

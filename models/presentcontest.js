@@ -6,6 +6,7 @@ var ContestQuestionSchema=new mongoose.Schema({
 
 /////////////////////////////////////////////////////////////
 var PresentContestSchema=new mongoose.Schema({
+	contest_id:String,
 	contest_name:String,
 	username:String,
 	start_date:String,

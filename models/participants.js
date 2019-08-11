@@ -1,5 +1,11 @@
 var mongoose=require("mongoose"); 
-var ParticipantSchema=new mongoose.Schema({
-	pname:String,rank:String,score:String
+var contestantSchema=new mongoose.Schema({
+	username:String,score:String
+});
+
+var ParticipantSchema= new mongoose.Schema({
+	
+	contest_id:String,
+	contestant:[contestantSchema]
 });
 module.exports=mongoose.model("Participant",ParticipantSchema);

@@ -1,0 +1,25 @@
+<%include ../partials/header%>
+<h5>
+	contest Name:<%=contest_name%>
+	contest Start Time:<%=start_time%>
+	contest End Time:<%=end_time%>
+	contest id: <%=contest_id%>
+</h5>
+<%var i=0%>
+<form action="/contest/sumbit/:<%=contest_id%>" method="post">
+<%contest_questions.forEach(function(questions){%>
+<%=questions.question%>
+<%=questions.optionA%>
+<%=questions.optionB%>
+<%=questions.optionC%>
+<%=questions.optionD%>
+your answer: <select name="ans<%=i++%>">
+<option value="A">A</option>
+	<option value="B">C</option>
+	<option value="C">C</option>
+	<option value="D">D</option>
+</select>
+<%})%>
+</form>
+
+<%include ../partials/footer%>
