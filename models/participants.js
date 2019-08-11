@@ -4,7 +4,7 @@ var contestantSchema=new mongoose.Schema({
 });
 
 var ParticipantSchema= new mongoose.Schema({
-	
+	contest_name:String,
 	contest_id:String,
 	contestant:[contestantSchema]
 });

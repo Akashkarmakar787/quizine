@@ -485,7 +485,7 @@ FutureContest.findById(id,function(err,contest){
                     from: 'aroy0761@gmail.com', // sender address 
                     to: futurecontest.username, // list of receivers 
                     subject: 'Contest Hosting', // Subject line 
-                    html: 'Go to the link and add questions for the contest. Your contest will start on the date and time you have provided.Do not share this link with any one. Link: https://goorm-ide-test-mhaxq.run.goorm.io/useradmin/'+futurecontest._id+'/'+futurecontest.username  // html body 
+                    html: 'Go to the link and add questions for the contest. Your contest will start on the date and time you have provided.Do not share this link with any one. Link: rouded-ridge-73828.herokuapp.com/useradmin/'+futurecontest._id+'/'+futurecontest.username  // html body 
                 };
 
                 transporter.sendMail(mailOptions, function (err, info) {
@@ -748,9 +748,12 @@ app.get("/contest/register/:username/:id",isLoggedIn,function(req,res){
 			   if(err)console.log(err);
 			   else
 				   {
+					   
+					var contest_name="";  
+		FutureContest.findOne({_id:req.params.id},function(err,fc){if(err)console.log(err);else {contest_name=fc.contest_name;console.log(contest_name);}});			   
 					   if(!participant)
 						   {
-							   participants.create({contest_id:req.params.id},function(err,p){
+							   participants.create({contest_name:contest_name,contest_id:req.params.id},function(err,p){
 								if(err)
 								console.log(err);
 									else
@@ -876,10 +879,8 @@ app.get("/contest/start/:username/:contest_id",isLoggedIn,function(req,res){
 					});
 					if(flag==0){res.send("you have not registered");}
 					else{
-						     console.log("mic testing");
-						
-								console.log(presentcontest);
 					var contest_questions=[];
+					var number=0;
 						if(!presentcontest.contest_questions)res.redirect("/contestinfo");
 						
 					 presentcontest.contest_questions.forEach(function(q){
@@ -889,11 +890,12 @@ app.get("/contest/start/:username/:contest_id",isLoggedIn,function(req,res){
 											   "optionC":q.optionC,
 											   "optionD":q.optionD}
 											  );
+						 number++;
 						 });
 						
 						
 						
-					res.render("contest/livecontest",{start_time:presentcontest.start_time,end_time:presentcontest.end_time,start_date:presentcontest.start_date, end_date:presentcontest.end_date, contest_name:presentcontest.contest_name,contest_questions:contest_questions,contest_id:presentcontest.contest_id});
+					res.render("contest/livecontest",{start_time:presentcontest.start_time,end_time:presentcontest.end_time,start_date:presentcontest.start_date, end_date:presentcontest.end_date, contest_name:presentcontest.contest_name,contest_questions:contest_questions,contest_id:presentcontest.contest_id,number:number});
 						
 						
 						
@@ -908,11 +910,54 @@ app.get("/contest/start/:username/:contest_id",isLoggedIn,function(req,res){
 	
 	
 });
-app.get("/contest/leaderboard",function(req,res){
-	res.render("contest/leaderboard");
+
+app.post("/contest/sumbit/:username/:id/:number",isLoggedIn,function(req,res){
+		var marks=0;
+		PresentContest.findOne({contest_id:req.params.id},function(err,presentcontest){
+			if(!presentcontest)
+				{
+					res.send("we are sorry!! contest ended!!!");
+				}
+			else{
+				  var anskey=[];
+				  
+				  presentcontest.contest_questions.forEach(function(q){
+					  anskey.push(q.answer);
+				  });
+				for(var i=0;i<parseInt(req.params.number);i++)
+				{
+					if(req.body["ans"+i.toString()]==anskey[i])marks++;
+				}
+				participants.findOne({contest_id:req.params.id},function(err,participant){
+					participant.contestant.forEach(function(p){
+						if(p.username==req.params.username&&p.score=="")
+							{
+								p.score=marks.toString();
+								participant.save();
+							}
+					});
+				});
+				res.send("Answer saved");
+				
+			}
+		});
+		
+	});
+app.get("/contest/leaderboard",isLoggedIn,function(req,res){
+	participants.find({},function(err,contest){
+	res.render("contest/leaderboard",{contest:contest});	
+	});
+	
 });
 
-
+app.get("/showresult/:id",isLoggedIn,function(req,res){
+	participants.findOne({contest_id:req.params.id},function(err,participant){
+		if(err)console.log(err);
+		else{
+                res.render("contest/result",{result:participant.contestant});
+		}
+	});
+});
 
 
 app.get("/contest/countdown",function(req,res){
@@ -1010,36 +1055,3 @@ function forgotpassword_middleware(req,res,next){
 app.listen(3000,function(){
 console.log("App started");
 });
-////////////////////////////////////////////////testing
-app.get("/testing",function(req,res){res.render("testing");});
-app.post("/testing",function(req,res){
-	
-	
-	
-	
-	
-	
-	
-	var cur=new Date();
-	var current_hour = cur.getHours();
-	console.log(current_hour);
-	console.log(cur.toISOString());
-	var curdate=cur.toISOString().substring(0,10);
-	console.log(curdate);
-	console.log(req.body.sd);
-var date1 = new Date(req.body.sd);
-var date2 = new Date(curdate);
-var diffDays = parseInt((date1 - date2) / (1000 * 60 * 60 * 24)); //gives day difference 
-//one_day means 1000*60*60*24
-//one_hour means 1000*60*60
-//one_minute means 1000*60
-//one_second means 1000
-console.log(diffDays)
-});
-setTimeout(function(){
-	
-var m = moment.tz('Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss');
-console.log(m);
-	console.log()},3*1000);
-
-

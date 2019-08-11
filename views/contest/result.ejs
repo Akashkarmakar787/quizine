@@ -1,0 +1,13 @@
+<% include ../partials/header%>
+<table>
+	<%result.forEach(function(r){%>
+	<tr>
+	<%=r.username%>
+	</tr>
+	<tr>
+		<%=r.score%>
+	</tr>
+	<%})%>
+	
+</table>
+<% include ../partials/footer%>
