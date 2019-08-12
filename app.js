@@ -873,7 +873,7 @@ app.get("/contest/start/:username/:contest_id",isLoggedIn,function(req,res){
 		else{
 			participants.findOne({contest_id:req.params.contest_id},function(err,participant){
 				
-				if(!participant||participant.length==0){res.send("no contest found");}
+				if(!participant){var message="you have not registered";res.render("contest/message",{message:message});}
 				else{
 						
 					var flag=0;
@@ -882,7 +882,7 @@ app.get("/contest/start/:username/:contest_id",isLoggedIn,function(req,res){
 						if(c.username==req.params.username)
 							{flag=1;}
 					});
-					if(flag==0){res.send("you have not registered");}
+					if(flag==0){var message="you have not registered";res.render("contest/message",{message:message});}
 					else{
 					var contest_questions=[];
 					var number=0;
