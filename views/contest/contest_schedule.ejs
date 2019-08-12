@@ -81,7 +81,7 @@
 </div>
 	
 <!-- 	Past Contests -->
-	<div class="container">
+	<!-- <div class="container">
   <h2>Past Contests</h2>
   <div class="table-responsive">          
   <table class="table">
@@ -101,7 +101,7 @@
         <td><a href="/contestdetails/<%=c["id"]%>"><h1><%= c["contest_name"] %></h1></a></td>
         <td><a href="/contest/countdown" target="blank"><%= c["contest_sdate"] %></a><br><%= c["st_time"] %></td>
 		<td><a href="/contest/countdown"target="blank"><%= c["contest_edate"] %></a><br><%= c["et_time"] %></td>
-		<td><a href="/contest_register/<%= currentUser.username %>"><button class="btn btn-primary btn-m" id="rg">Register</button></a></td>
+		<td><a href="/solve//<%= currentUser.username %>"><button class="btn btn-primary btn-m" id="rg">Solve</button></a></td>
       	<td><%= message %></td>
 		  
 	  </tr>
@@ -110,6 +110,6 @@
 	   <%})%> 
   </table>
   </div>	
-</div>
+</div> -->
  
 <% include ../partials/footer %>
