@@ -485,7 +485,7 @@ FutureContest.findById(id,function(err,contest){
                     from: 'aroy0761@gmail.com', // sender address 
                     to: futurecontest.username, // list of receivers 
                     subject: 'Contest Hosting', // Subject line 
-                    html: 'Go to the link and add questions for the contest. Your contest will start on the date and time you have provided.Do not share this link with any one. Link: rouded-ridge-73828.herokuapp.com/useradmin/'+futurecontest._id+'/'+futurecontest.username  // html body 
+                    html: 'Go to the link and add questions for the contest. Your contest will start on the date and time you have provided.Do not share this link with any one. Link: https://shrouded-ridge-73828.herokuapp.com/useradmin/'+futurecontest._id+'/'+futurecontest.username  // html body 
                 };
 
                 transporter.sendMail(mailOptions, function (err, info) {
