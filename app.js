@@ -749,11 +749,13 @@ app.get("/contest/register/:username/:id",isLoggedIn,function(req,res){
 			   else
 				   {
 					   
-					var contest_name="";  
-		FutureContest.findOne({_id:req.params.id},function(err,fc){if(err)console.log(err);else {contest_name=fc.contest_name;console.log(contest_name);}});			   
-					   if(!participant)
+					 
+		FutureContest.findById(req.params.id,function(err,fc){if(err)console.log(err);else{
+			
+			
+			if(!participant)
 						   {
-							   participants.create({contest_name:contest_name,contest_id:req.params.id},function(err,p){
+							   participants.create({contest_name:fc.contest_name,contest_id:req.params.id},function(err,p){
 								if(err)
 								console.log(err);
 									else
@@ -764,7 +766,7 @@ app.get("/contest/register/:username/:id",isLoggedIn,function(req,res){
 											if(err)console.log(err);
 										});
 											var message="You are now registered";
-									res.redirect("/contestinfo");
+									res.render("contest/message",{message:message});
 									
 										
 										
@@ -788,18 +790,21 @@ app.get("/contest/register/:username/:id",isLoggedIn,function(req,res){
 							  // }
 							   
 						   });
-						   if(flag==1)res.redirect("/contestinfo");
+						   if(flag==1){var message="Already registered";res.render("contest/message",{message:message});}
 						   else{
 							    participant.contestant.push({username:req.params.username,score:""});
 						   participant.save(function(err,succ){
 							   if(err)console.log(err);
 						   });
 						   var message="You are now registered";
-									res.redirect("/contestinfo");
+									res.render("contest/message",{message:message});
 							
 						   }
-						  r		
+						  		
 					   }
+		}});	
+					  // console.log("participant=",contest_name);
+					   
 				   }
 		   });
 			 
@@ -929,15 +934,24 @@ app.post("/contest/sumbit/:username/:id/:number",isLoggedIn,function(req,res){
 					if(req.body["ans"+i.toString()]==anskey[i])marks++;
 				}
 				participants.findOne({contest_id:req.params.id},function(err,participant){
+					var message="";var flag=0;
 					participant.contestant.forEach(function(p){
 						if(p.username==req.params.username&&p.score=="")
-							{
+							{    flag=1;
 								p.score=marks.toString();
 								participant.save();
 							}
 					});
+					if(flag==0){
+						message="either you have not registered or you have already submitted";
+						res.render("contest/message",{message:message});
+					}
+					else{
+						
+				    message="Successfully Saved";
+				res.render("contest/message",{message:message});
+					}
 				});
-				res.send("Answer saved");
 				
 			}
 		});
@@ -951,9 +965,11 @@ app.get("/contest/leaderboard",isLoggedIn,function(req,res){
 });
 
 app.get("/showresult/:id",isLoggedIn,function(req,res){
+	
 	participants.findOne({contest_id:req.params.id},function(err,participant){
 		if(err)console.log(err);
 		else{
+			   console.log(participant);
                 res.render("contest/result",{result:participant.contestant});
 		}
 	});
@@ -1048,10 +1064,10 @@ function forgotpassword_middleware(req,res,next){
 	
 }
 
-app.listen(process.env.PORT,process.env.IP,function(){
-console.log("App started");
-});
-
-// app.listen(3000,function(){
+// app.listen(process.env.PORT,process.env.IP,function(){
 // console.log("App started");
 // });
+
+app.listen(3000,function(){
+console.log("App started");
+});
