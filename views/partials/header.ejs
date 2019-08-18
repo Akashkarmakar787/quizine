@@ -1,29 +1,31 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>Quizine</title>
+		<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" href="/stylesheet/app.css">
+		 <link rel="stylesheet" type="text/css" href="css/style.css">
+       <link rel="stylesheet" type="text/css" href="/stylesheet/app.css">
+		<title>Quizine</title>
+		
 	</head>
 	<body>
-
-<nav class="navbar navbar-inverse">
+<div id="particles-js"></div
+	
+	
+<nav class="navbar navbar-inverse navbar-static-top">
   <div class="container-fluid">
     <div class="navbar-header">
-		<%if(!currentUser){%>
-		<a class="navbar-brand" href="/"><span style="font-size:40px;" ><strong>Q</strong></span>uizine</a>
-		<%} else{%>
-		<a class="navbar-brand" href="/dashboard"><span style="font-size:40px;" ><strong>Q</strong></span>uizine</a>
-		<%}%>
+		<a class="navbar-brand" style="color:#00EEC9"href="/dashboard"><span style="font-size:45px;" ><strong>Q</strong></span>uizine</a>
     </div>
    
     <ul class="nav navbar-nav navbar-right">
 		<%if(!currentUser){%>
-      <li><a href="/signup"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-      <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      <li><a href="/signup" style="color:#00EEC9"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+      <li><a href="/login" style="color:#00EEC9"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
 		<%} else {%>
-		<li><a href="#">Signed In as <%=currentUser.name%></a></li>
-		<li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span>Logout</a></li>
+		<li><a href="#" style="color:#00EEC9">Signed In as <%=currentUser.name%></a></li>
+		<li><a href="/logout" style="color:#00EEC9"><span class="glyphicon glyphicon-log-out"></span>Logout</a></li>
 		<%}%>
     </ul>
   </div>

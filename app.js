@@ -79,7 +79,8 @@ var transporter = nodemailer.createTransport({
 
 
 
-app.get("/",dashboardmiddleware,function(req,res){res.render("index"); });
+app.get("/",dashboardmiddleware,function(req,res){res.render("landingpage"); });
+app.get("/index",dashboardmiddleware,function(req,res){res.render("index")});
 app.get("/signup",function(req,res){
 	res.render("signup",{message:""});
 });

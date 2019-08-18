@@ -1,13 +1,28 @@
 <% include ../partials/header%>
-<table>
-<%contest.forEach(function(c){%>
+
+
+<% var i=1%>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Contest ID</th>
+      <th scope="col">Contest Name</th>
+      <th scope="col">Button</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%contest.forEach(function(c){%>
 <tr>
-	<a href="/showresult/<%=c.contest_id%>"><%=c.contest_id%></a>
-	<a href="/showresult/<%=c.contest_id%>">    <%=c.contest_name%></a>
-<br>
+	<th><%=i++%></th>
+	<td><a href="/showresult/<%=c.contest_id%>"><%=c.contest_id%></a></td>
+	<td><a href="/showresult/<%=c.contest_id%>"><%=c.contest_name%></a></td>
+	<td><a href="/showresult/<%=c.contest_id%>"><button>Show Result</button></a></td>
+	
+	<%})%>
 
-
-<%})%>	
+	</tr>
+      </tbody>
 </table>
 
 <% include ../partials/footer%>

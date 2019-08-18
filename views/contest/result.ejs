@@ -1,13 +1,32 @@
 <% include ../partials/header%>
-<table>
-	<%result.forEach(function(r){%>
-	<tr>
-	<%=r.username%>
-	</tr>
-	<tr>
-		<%=r.score%>
-	</tr>
-	<%})%>
+<div class="container">
 	
-</table>
+  <!-- <h1 style="padding-top:3%;">QUIZATHON</h1> -->
+  <h2>Leaderboard</h2>                                                                                    
+  <div class="table-responsive">          
+  <table class="table">
+    <thead>
+      <tr>
+        
+        <th>USERNAME</th>
+        <th>SCORE</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%result.forEach(function(r){%>
+	<tr>
+		<td><%=r.username%></td>
+		<td><%=r.score%></td>
+	
+	</tr>
+		<%})%>
+	
+	  
+		
+    </tbody>
+  </table>
+  </div>	
+</div>
+
+
 <% include ../partials/footer%>
