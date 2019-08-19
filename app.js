@@ -697,7 +697,7 @@ app.post("/useradmin/contest/:id",function(req,res){
 	FutureContest.findById(req.params.id,function(err,futurecontest){
 		if(err){console.log(err);res.redirect("/");}
 		else{
-			  if(futurecontest.length==0)res.redirect("/");
+			  if(futurecontest.length==0||!futurecontest)res.redirect("/");
 			if(futurecontest.__v==0)
 				{
 					res.render("useradmin/addquestion",{id:req.params.id,n:req.body.number});
