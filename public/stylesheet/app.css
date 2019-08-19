@@ -19,7 +19,7 @@
 }
 .col-sm-4 .topics{height:200px;}
 .topics p{
-	position:absolute;top:48%;left:20%;right:20%;font-family:bold;
+	position:absolute;top:48%;left:20%;right:20%;font-family:"Comic Sans MS",cursive,sans-serif;font-size:23px;
 }
 
 .col-sm-4 *{	transition: all 0.2s linear 0s;}
@@ -40,6 +40,7 @@
 
 .rightsidecontents{
 	margin-top:1%;margin-right:5.5%;
+	height:75px;
 }
 .main{
 	margin-top:5%;
