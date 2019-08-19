@@ -681,9 +681,9 @@ app.get("/useradmin/:id/:username",function(req,res){
 	FutureContest.findById(req.params.id,function(err,futurecontest){
 		if(err){console.log(err);res.redirect("/");}
 		else{ 
-			   if(futurecontest.length==0)res.redirect("/");
-			console.log(futurecontest);
-			  if(futurecontest.__v==0)
+			   if(!futurecontest)res.redirect("/");
+			   
+			  else if(futurecontest.__v==0)
 				  {
 					  res.render("useradmin/noofquestions",{id:req.params.id});
 				  }
@@ -697,8 +697,8 @@ app.post("/useradmin/contest/:id",function(req,res){
 	FutureContest.findById(req.params.id,function(err,futurecontest){
 		if(err){console.log(err);res.redirect("/");}
 		else{
-			  if(futurecontest.length==0||!futurecontest)res.redirect("/");
-			if(futurecontest.__v==0)
+			  if(!futurecontest)res.redirect("/");
+			else if(futurecontest.__v==0)
 				{
 					res.render("useradmin/addquestion",{id:req.params.id,n:req.body.number});
 				}
@@ -1065,10 +1065,10 @@ function forgotpassword_middleware(req,res,next){
 	
 }
 
-app.listen(process.env.PORT,process.env.IP,function(){
-console.log("App started");
-});
-
-// app.listen(3000,function(){
+// app.listen(process.env.PORT,process.env.IP,function(){
 // console.log("App started");
 // });
+
+app.listen(3000,function(){
+console.log("App started");
+});
